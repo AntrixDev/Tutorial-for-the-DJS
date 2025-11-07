@@ -5,22 +5,22 @@ import { Card } from "./Card";
 
 const cards = [
   {
-    source: require("./assets/death.png"),
+    source: require("./assets/TUTsixth.png"),
   },
   {
-    source: require("./assets/chariot.png"),
+    source: require("./assets/TUTfifth.png"),
   },
   {
-    source: require("./assets/high-priestess.png"),
+    source: require("./assets/TUTfourth.png"),
   },
   {
-    source: require("./assets/justice.png"),
+    source: require("./assets/TUTthird.png"),
   },
   {
-    source: require("./assets/devil.png"),
+    source: require("./assets/TUTsecond.png"),
   },
   {
-    source: require("./assets/fool.png"),
+    source: require("./assets/TUTfirst.png"),
   },
 ];
 

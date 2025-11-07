@@ -1,6 +1,6 @@
 import React from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { Tarot } from './src'; // Adjust path if your src folder is elsewhere
+import { Tarot } from './src';
 
 export default function App() {
   return (

@@ -16,10 +16,8 @@ import { snapPoint } from "react-native-redash";
 const { width: wWidth, height } = Dimensions.get("window");
 
 const SNAP_POINTS = [-wWidth, 0, wWidth];
-const aspectRatio = 722 / 368;
-const CARD_WIDTH = wWidth - 128;
-const CARD_HEIGHT = CARD_WIDTH * aspectRatio;
-const IMAGE_WIDTH = CARD_WIDTH * 0.9;
+const CARD_SIZE = wWidth * 0.6; // Square size for circle
+const IMAGE_SIZE = CARD_SIZE * 0.8; // Smaller for label effect
 const DURATION = 250;
 
 interface CardProps {
@@ -87,7 +85,7 @@ export const Card = ({ card: { source }, shuffleBack, index }: CardProps) => {
   const style = useAnimatedStyle(() => ({
     transform: [
       { perspective: 4000 },
-      { rotateX: "40deg" },
+      { rotateX: "45deg" },
       { translateX: translateX.value },
       { translateY: translateY.value },
       { rotateY: `${rotateZ.value / 10}deg` },
@@ -99,14 +97,13 @@ export const Card = ({ card: { source }, shuffleBack, index }: CardProps) => {
     <View style={styles.container} pointerEvents="box-none">
       <GestureDetector gesture={gesture}>
         <Animated.View style={[styles.card, style]}>
-          <Image
-            source={source}
-            style={{
-              width: IMAGE_WIDTH,
-              height: IMAGE_WIDTH * aspectRatio,
-            }}
-            resizeMode="contain"
-          />
+          <View style={styles.imageWrapper}>
+            <Image
+              source={source}
+              style={styles.image}
+              resizeMode="contain"
+            />
+          </View>
         </Animated.View>
       </GestureDetector>
     </View>
@@ -120,11 +117,29 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   card: {
-    backgroundColor: "white",
+    backgroundColor: "#ffffffff",
     borderRadius: 10,
-    width: CARD_WIDTH,
-    height: CARD_HEIGHT,
+    width: CARD_SIZE,
+    height: CARD_SIZE*0.8,
     justifyContent: "center",
-    alignItems: "center"
+    alignItems: "center",
+    borderWidth: 7,
+    // shadowColor: "#000",
+    // shadowOffset: { width: 0, height: 2 },
+    // shadowOpacity: 0.1,
+    // shadowRadius: 4,
+    // elevation: 3,
+    overflow: 'hidden',
+  },
+  imageWrapper: {
+    width: IMAGE_SIZE,
+    height: IMAGE_SIZE,
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 4,
+  },
+  image: {
+    width: "100%",
+    height: "100%",
   },
 });
