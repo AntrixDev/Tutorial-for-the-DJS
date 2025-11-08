@@ -31,7 +31,7 @@ export const Tarot = () => {
   return (
     <View style={styles.container}>
       {cards.map((card, index) => (
-        <Card card={card} key={index} index={index} shuffleBack={shuffleBack} />
+        <Card card={card} key={index} index={index} shuffleBack={shuffleBack} backgroundImage={require("./assets/CardBckg.png")} />
       ))}
     </View>
   );
@@ -40,6 +40,6 @@ export const Tarot = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "pink",
+    backgroundColor: "black",
   },
 });

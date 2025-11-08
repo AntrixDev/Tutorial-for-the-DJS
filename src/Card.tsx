@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { View, StyleSheet, Dimensions, Image } from "react-native";
+import { View, StyleSheet, Dimensions, Image, ImageBackground } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, {
   Easing,
@@ -16,8 +16,8 @@ import { snapPoint } from "react-native-redash";
 const { width: wWidth, height } = Dimensions.get("window");
 
 const SNAP_POINTS = [-wWidth, 0, wWidth];
-const CARD_SIZE = wWidth * 0.6; // Square size for circle
-const IMAGE_SIZE = CARD_SIZE * 0.8; // Smaller for label effect
+const CARD_SIZE = wWidth * 0.6;
+const IMAGE_SIZE = CARD_SIZE * 0.8;
 const DURATION = 250;
 
 interface CardProps {
@@ -27,9 +27,10 @@ interface CardProps {
   shuffleBack: SharedValue<boolean>;
   index: number;
   key?: number;
+  backgroundImage: ReturnType<typeof require> | { uri: string }; // 👈 add prop for background
 }
 
-export const Card = ({ card: { source }, shuffleBack, index }: CardProps) => {
+export const Card = ({ card: { source }, shuffleBack, index, backgroundImage }: CardProps) => {
   const offset = useSharedValue({ x: 0, y: 0 });
   const translateX = useSharedValue(0);
   const translateY = useSharedValue(-height);
@@ -37,6 +38,7 @@ export const Card = ({ card: { source }, shuffleBack, index }: CardProps) => {
   const rotateZ = useSharedValue(0);
   const delay = index * DURATION;
   const theta = -10 + Math.random() * 20;
+
   useEffect(() => {
     translateY.value = withDelay(
       delay,
@@ -44,6 +46,7 @@ export const Card = ({ card: { source }, shuffleBack, index }: CardProps) => {
     );
     rotateZ.value = withDelay(delay, withSpring(theta));
   }, [delay, index, rotateZ, theta, translateY]);
+
   useAnimatedReaction(
     () => shuffleBack.value,
     (v) => {
@@ -59,6 +62,7 @@ export const Card = ({ card: { source }, shuffleBack, index }: CardProps) => {
       }
     }
   );
+
   const gesture = Gesture.Pan()
     .onBegin(() => {
       offset.value = { x: translateX.value, y: translateY.value };
@@ -85,7 +89,7 @@ export const Card = ({ card: { source }, shuffleBack, index }: CardProps) => {
   const style = useAnimatedStyle(() => ({
     transform: [
       { perspective: 4000 },
-      { rotateX: "45deg" },
+      { rotateX: "40deg" },
       { translateX: translateX.value },
       { translateY: translateY.value },
       { rotateY: `${rotateZ.value / 10}deg` },
@@ -93,17 +97,20 @@ export const Card = ({ card: { source }, shuffleBack, index }: CardProps) => {
       { scale: scale.value },
     ],
   }));
+
   return (
     <View style={styles.container} pointerEvents="box-none">
       <GestureDetector gesture={gesture}>
         <Animated.View style={[styles.card, style]}>
-          <View style={styles.imageWrapper}>
-            <Image
-              source={source}
-              style={styles.image}
-              resizeMode="contain"
-            />
-          </View>
+          <ImageBackground
+            source={backgroundImage}
+            style={styles.backgroundImage}
+            resizeMode="cover"
+          >
+            <View style={styles.imageWrapper}>
+              <Image source={source} style={styles.image} resizeMode="contain" />
+            </View>
+          </ImageBackground>
         </Animated.View>
       </GestureDetector>
     </View>
@@ -117,19 +124,20 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   card: {
-    backgroundColor: "#ffffffff",
-    borderRadius: 10,
+    backgroundColor: "black",
+    borderRadius: 15,
     width: CARD_SIZE,
-    height: CARD_SIZE*0.8,
+    height: CARD_SIZE * 0.8,
     justifyContent: "center",
     alignItems: "center",
-    borderWidth: 7,
-    // shadowColor: "#000",
-    // shadowOffset: { width: 0, height: 2 },
-    // shadowOpacity: 0.1,
-    // shadowRadius: 4,
-    // elevation: 3,
-    overflow: 'hidden',
+    borderWidth: 4,
+    overflow: "hidden",
+  },
+  backgroundImage: {
+    width: "100%",
+    height: "100%",
+    justifyContent: "center",
+    alignItems: "center",
   },
   imageWrapper: {
     width: IMAGE_SIZE,
