@@ -86,17 +86,18 @@ export const Card = ({ card: { source }, shuffleBack, index, backgroundImage }: 
       });
     });
 
-  const style = useAnimatedStyle(() => ({
-    transform: [
-      { perspective: 4000 },
-      { rotateX: "40deg" },
-      { translateX: translateX.value },
-      { translateY: translateY.value },
-      { rotateY: `${rotateZ.value / 10}deg` },
-      { rotateZ: `${rotateZ.value}deg` },
-      { scale: scale.value },
-    ],
-  }));
+const style = useAnimatedStyle(() => ({
+  transform: [
+    { perspective: 4000 },
+    { rotateX: "40deg" },
+    { translateX: translateX.value },
+    { translateY: translateY.value },
+    { rotateY: `${rotateZ.value / 10}deg` },
+    { rotateZ: `${rotateZ.value}deg` },
+    { scale: scale.value },
+  ] as any,
+}));
+
 
   return (
     <View style={styles.container} pointerEvents="box-none">
