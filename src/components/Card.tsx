@@ -53,7 +53,7 @@ export const Card = ({ card: { source }, shuffleBack, index, backgroundImage }: 
     () => shuffleBack.value,
     (v) => {
       if (v) {
-        const duration = 150 * index;
+        const duration = 150 * index + 150;
         translateX.value = withDelay(
           duration,
           withSpring(0, {}, () => {

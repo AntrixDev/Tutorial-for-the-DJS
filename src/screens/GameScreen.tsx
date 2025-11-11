@@ -1,7 +1,5 @@
 import React from 'react';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { Guide } from '../components';
-import { TouchableOpacity, View, StyleSheet, Text, ImageBackground, } from 'react-native';
+import { TouchableOpacity, View, StyleSheet, Text, } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
 export default function GuideScreen() {
@@ -9,14 +7,9 @@ export default function GuideScreen() {
 
   return (
     <View style={styles.container}>
-    <GestureHandlerRootView style={{ flex: 1 }}>
-      <ImageBackground source={require('../assets/GuideBckg.png')} style={{flex: 1}}>
-        <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-          <Text style={styles.arrow}>⤶</Text>
-        </TouchableOpacity>
-      </ImageBackground>
-      <Guide />
-    </GestureHandlerRootView>
+      <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+        <Text style={styles.arrow}>⤶</Text>
+      </TouchableOpacity>
     </View>
   );
 }
