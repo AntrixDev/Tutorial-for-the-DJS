@@ -29,17 +29,10 @@ export const assets = cards.map((card) => card.source);
 export const Guide = () => {
   const shuffleBack = useSharedValue(false);
   return (
-    <View style={styles.container}>
+    <>
       {cards.map((card, index) => (
         <Card card={card} key={index} index={index} shuffleBack={shuffleBack} backgroundImage={require("../assets/CardBckg.png")} />
       ))}
-    </View>
+    </>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "black",
-  },
-});

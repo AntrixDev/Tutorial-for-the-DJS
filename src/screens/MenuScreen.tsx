@@ -2,17 +2,31 @@ import { StyleSheet, View } from 'react-native';
 import { Parallax } from '../components';
 import { layers } from '../assets/parallax';
 import { ParallaxButton } from '../components';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+
+type RootStackParamList = {
+  Menu: undefined;
+  Guide: undefined;
+};
+
+type MenuScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'Menu'>;
 
 export default function MenuScreen() {
+  const navigation = useNavigation<MenuScreenNavigationProp>();
+
   return (
     <View style={styles.container}>
-      <Parallax layers={layers}/>
+      <Parallax layers={layers} />
       <View style={styles.buttonsWrapper}>
         <View style={styles.button}>
           <ParallaxButton label="START GAME" onPress={() => {}} />
         </View>
         <View style={styles.button}>
-          <ParallaxButton label="HOW TO PLAY?" onPress={() => {}} />
+          <ParallaxButton
+            label="HOW TO PLAY?"
+            onPress={() => navigation.navigate('Guide')}
+          />
         </View>
       </View>
     </View>

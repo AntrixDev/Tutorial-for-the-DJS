@@ -1,5 +1,4 @@
 import React from 'react';
-import { useWindowDimensions } from 'react-native';
 import Animated, {
   useAnimatedSensor,
   SensorType,
@@ -7,12 +6,15 @@ import Animated, {
   interpolate,
   Extrapolation,
 } from 'react-native-reanimated';
+import { SCREEN_WIDTH, SCREEN_HEIGHT } from '../screenWH';
+
+const SWidth = SCREEN_WIDTH;
+const SHeight = SCREEN_HEIGHT;
 
 const IMAGE_OFFSET = 30;
 const SENSITIVITY = 0.75;
 
 const ParallaxImg = ({ img, zIndex }) => {
-  const { width, height } = useWindowDimensions();
 
   const sensor = useAnimatedSensor(SensorType.ROTATION);
 
@@ -44,8 +46,8 @@ const ParallaxImg = ({ img, zIndex }) => {
       source={img}
       style={[
         {
-          width: width + IMAGE_OFFSET,
-          height: height + IMAGE_OFFSET,
+          width: SWidth + IMAGE_OFFSET,
+          height: SHeight + IMAGE_OFFSET,
           position: 'absolute',
         },
         imgStyle,

@@ -12,11 +12,13 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import { snapPoint } from "react-native-redash";
+import { SCREEN_WIDTH, SCREEN_HEIGHT } from '../screenWH';
 
-const { width: wWidth, height } = Dimensions.get("window");
+const SWidth = SCREEN_WIDTH;
+const SHeight = SCREEN_HEIGHT;
 
-const SNAP_POINTS = [-wWidth, 0, wWidth];
-const CARD_SIZE = wWidth * 0.6;
+const SNAP_POINTS = [-SWidth, 0, SWidth];
+const CARD_SIZE = SWidth * 0.6;
 const IMAGE_SIZE = CARD_SIZE * 0.8;
 const DURATION = 250;
 
@@ -33,7 +35,7 @@ interface CardProps {
 export const Card = ({ card: { source }, shuffleBack, index, backgroundImage }: CardProps) => {
   const offset = useSharedValue({ x: 0, y: 0 });
   const translateX = useSharedValue(0);
-  const translateY = useSharedValue(-height);
+  const translateY = useSharedValue(-SHeight);
   const scale = useSharedValue(1);
   const rotateZ = useSharedValue(0);
   const delay = index * DURATION;
