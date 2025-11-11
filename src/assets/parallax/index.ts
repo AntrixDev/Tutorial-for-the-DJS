@@ -10,6 +10,7 @@ import layer9 from './layer9.png';
 import layer10 from './layer10.png';
 import layer11 from './layer11.png';
 import layer12 from './layer12.png';
+import bckg from './bckg.png';
 
 export const layers = [
   layer1,
@@ -23,5 +24,6 @@ export const layers = [
   layer9,
   layer10,
   layer11,
-  layer12
+  layer12,
+  bckg
 ];
