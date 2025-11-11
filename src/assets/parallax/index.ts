@@ -23,5 +23,5 @@ export const layers = [
   layer9,
   layer10,
   layer11,
-  layer12,
+  layer12
 ];
