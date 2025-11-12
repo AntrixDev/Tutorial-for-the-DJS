@@ -35,6 +35,7 @@ export default function SongSelectScreen() {
   const itemOccupied = availableWidth / numColumns;
   const itemWidth = itemOccupied - 2 * itemMargin;
   const imageSize = itemWidth - 2 * itemPadding;
+  const avalibleSongs = 1;
 
   const renderItem = ({ item, index }: { item: Song; index: number }) => (
     <TouchableOpacity
@@ -42,16 +43,21 @@ export default function SongSelectScreen() {
         styles.songItem,
         {
           width: itemWidth,
-          backgroundColor: index % 2 === 0 ? '#8b8b8bff' : '#767676ff',
+          backgroundColor: index > avalibleSongs ? '#ffffff97' : '#ffffffff',
+          opacity: index > avalibleSongs ? 0.25 : 1,
         },
       ]}
-      onPress={() => {}}
+      onPress={() => {
+        if (index <= avalibleSongs) {
+          //nav
+      }
+      }}
     >
       <Image style={[styles.songImage, { width: imageSize, height: imageSize }]} source={item.image} />
+      <Text style={styles.songDifficulty}>{item.difficulty}</Text>
       <View style={styles.songInfo}>
         <Text style={styles.songTitle}>{item.title}</Text>
-        <Text style={styles.songSinger}>{item.singer}</Text>
-        <Text style={styles.songDifficulty}>{item.difficulty}</Text>
+        <Text style={styles.songSinger}>by {item.singer}</Text>
       </View>
     </TouchableOpacity>
   );
@@ -61,7 +67,7 @@ export default function SongSelectScreen() {
       <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
         <Text style={styles.arrow}>⤶</Text>
       </TouchableOpacity>
-      <View style={[styles.songListContainer, { width: containerWidth, height: 0.8 * SHeight }]}>
+      <View style={[styles.songListContainer, { width: containerWidth, height: SHeight }]}>
         <FlatList
           data={songs}
           renderItem={renderItem}
@@ -72,8 +78,8 @@ export default function SongSelectScreen() {
         />
       </View>
 
-      {/* <Image source={require('../assets/TUTfirst.png')} style={[styles.pinkBorder, { left: 0 }]} />
-      <Image source={require('../assets/TUTfifth.png')} style={[styles.pinkBorder, { right: 0 }]} /> */}
+      <Image source={require('../assets/ui/SSCorner.png')} style={[styles.pinkBorder, { left: 0 }]} />
+      <Image source={require('../assets/ui/SSCorner.png')} style={[styles.pinkBorder, { right: 0, transform: [{ scaleX: -1 }] }]} />
     </View>
   );
 }
@@ -81,7 +87,7 @@ export default function SongSelectScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#131313ff',
+    backgroundColor: '#000000ff',
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -110,10 +116,6 @@ const styles = StyleSheet.create({
   },
   songListContainer: {
     backgroundColor: 'transparent',
-    borderWidth: 2,
-    borderColor: 'white',
-    borderRadius: 10,
-    padding: 10,
     alignItems: 'center',
     justifyContent: 'flex-start',
     overflow: 'hidden',
@@ -121,12 +123,18 @@ const styles = StyleSheet.create({
   songItem: {
     flexDirection: 'column',
     borderRadius: 8,
-    margin: 10,
+    marginVertical: 8,
+    marginHorizontal: 8,
     alignItems: 'center',
     padding: 10,
+    borderWidth: 2,
+    borderColor: 'black',
+    position: 'relative',
   },
   songImage: {
     borderRadius: 8,
+    borderWidth: 2,
+    borderColor: 'black',
   },
   songInfo: {
     marginTop: 5,
@@ -144,18 +152,24 @@ const styles = StyleSheet.create({
     marginTop: 2,
     textAlign: 'center',
   },
-  songDifficulty: {
-    fontSize: 12,
-    color: '#000000ff',
-    marginTop: 3,
-    textAlign: 'center',
-    fontWeight: '800',
-  },
+  songDifficulty: { 
+  fontSize: 12,
+  color: 'white',
+  marginTop: 3,
+  textAlign: 'center',
+  fontWeight: '800',
+  backgroundColor: '#f393cbff',
+  borderColor: 'black',
+  paddingHorizontal: 6,
+  paddingVertical: 2,
+  borderRadius: 10,
+  position: 'absolute',
+},
+
   pinkBorder: {
-    position: 'absolute',
-    top: 0,
-    bottom: 0,
-    width: 50,
-    resizeMode: 'stretch',
+  position: 'absolute',
+  bottom: 0,
+  width: SCREEN_WIDTH * 0.20,
+  height: SCREEN_WIDTH *0.23,
   },
 });

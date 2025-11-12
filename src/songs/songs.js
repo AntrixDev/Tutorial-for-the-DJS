@@ -28,6 +28,102 @@ const songs = [
       right: timingsS2R,
     },
   },
+  {
+    id: 3,
+    title: 'Are You Ready for Me Baby',
+    singer: 'Funky Giraffe',
+    mp3: require('./tracks/AreYouReadyforMeBaby.mp3'),
+    image: require('../assets/songCovers/test.png'),
+    difficulty: 'Hard',
+    timings: {
+      left: timingsS2L,
+      right: timingsS2R,
+    },
+  },
+  {
+    id: 4,
+    title: 'Are You Ready for Me Baby',
+    singer: 'Funky Giraffe',
+    mp3: require('./tracks/AreYouReadyforMeBaby.mp3'),
+    image: require('../assets/songCovers/test.png'),
+    difficulty: 'Hard',
+    timings: {
+      left: timingsS2L,
+      right: timingsS2R,
+    },
+  },
+  {
+    id: 2,
+    title: 'Are You Ready for Me Baby',
+    singer: 'Funky Giraffe',
+    mp3: require('./tracks/AreYouReadyforMeBaby.mp3'),
+    image: require('../assets/songCovers/test.png'),
+    difficulty: 'Hard',
+    timings: {
+      left: timingsS2L,
+      right: timingsS2R,
+    },
+  },
+  {
+    id: 2,
+    title: 'Are You Ready for Me Baby',
+    singer: 'Funky Giraffe',
+    mp3: require('./tracks/AreYouReadyforMeBaby.mp3'),
+    image: require('../assets/songCovers/test.png'),
+    difficulty: 'Hard',
+    timings: {
+      left: timingsS2L,
+      right: timingsS2R,
+    },
+  },
+  {
+    id: 2,
+    title: 'Are You Ready for Me Baby',
+    singer: 'Funky Giraffe',
+    mp3: require('./tracks/AreYouReadyforMeBaby.mp3'),
+    image: require('../assets/songCovers/test.png'),
+    difficulty: 'Hard',
+    timings: {
+      left: timingsS2L,
+      right: timingsS2R,
+    },
+  },
+  {
+    id: 2,
+    title: 'Are You Ready for Me Baby',
+    singer: 'Funky Giraffe',
+    mp3: require('./tracks/AreYouReadyforMeBaby.mp3'),
+    image: require('../assets/songCovers/test.png'),
+    difficulty: 'Hard',
+    timings: {
+      left: timingsS2L,
+      right: timingsS2R,
+    },
+  },
+  {
+    id: 2,
+    title: 'Are You Ready for Me Baby',
+    singer: 'Funky Giraffe',
+    mp3: require('./tracks/AreYouReadyforMeBaby.mp3'),
+    image: require('../assets/songCovers/test.png'),
+    difficulty: 'Hard',
+    timings: {
+      left: timingsS2L,
+      right: timingsS2R,
+    },
+  },
+  {
+    id: 2,
+    title: 'Are You Ready for Me Baby',
+    singer: 'Funky Giraffe',
+    mp3: require('./tracks/AreYouReadyforMeBaby.mp3'),
+    image: require('../assets/songCovers/test.png'),
+    difficulty: 'Hard',
+    timings: {
+      left: timingsS2L,
+      right: timingsS2R,
+    },
+  },
 ];
 
 
