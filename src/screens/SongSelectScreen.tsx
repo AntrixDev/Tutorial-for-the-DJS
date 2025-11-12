@@ -8,22 +8,14 @@ import {
   FlatList,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import songs from '../songs/songs';
+import songs, { Song } from '../songs/songs';
 import { SCREEN_WIDTH, SCREEN_HEIGHT } from '../screenWH';
 
 const SWidth = SCREEN_WIDTH;
 const SHeight = SCREEN_HEIGHT;
 
-interface Song {
-  id: number;
-  title: string;
-  singer: string;
-  image: any;
-  difficulty: string;
-}
-
 export default function SongSelectScreen() {
-  const navigation = useNavigation();
+  const navigation = useNavigation<any>();
 
   const numColumns = 4;
   const containerWidth = 0.7 * SWidth;
@@ -35,7 +27,7 @@ export default function SongSelectScreen() {
   const itemOccupied = availableWidth / numColumns;
   const itemWidth = itemOccupied - 2 * itemMargin;
   const imageSize = itemWidth - 2 * itemPadding;
-  const avalibleSongs = 1;
+  const avalibleSongs = 1; //last index
 
   const renderItem = ({ item, index }: { item: Song; index: number }) => (
     <TouchableOpacity
@@ -50,6 +42,7 @@ export default function SongSelectScreen() {
       onPress={() => {
         if (index <= avalibleSongs) {
           //nav
+          navigation.navigate('DescSong', { song: item});
       }
       }}
     >
