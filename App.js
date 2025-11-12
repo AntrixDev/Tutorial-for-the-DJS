@@ -3,7 +3,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import MenuScreen from './src/screens/MenuScreen';
 import GuideScreen from './src/screens/GuideScreen';
-import GameScreen from './src/screens/GameScreen';
+import SongSelectScreen from './src/screens/SongSelectScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -13,7 +13,7 @@ export default function App() {
       <Stack.Navigator initialRouteName="Menu" screenOptions={{ headerShown: false }}>
         <Stack.Screen name="Menu" component={MenuScreen} />
         <Stack.Screen name="Guide" component={GuideScreen} />
-        <Stack.Screen name="Game" component={GameScreen} />
+        <Stack.Screen name="SongSelect" component={SongSelectScreen} />
         </Stack.Navigator>
     </NavigationContainer>
   );

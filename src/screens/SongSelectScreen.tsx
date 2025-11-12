@@ -22,7 +22,7 @@ interface Song {
   difficulty: string;
 }
 
-export default function GameScreen() {
+export default function SongSelectScreen() {
   const navigation = useNavigation();
 
   const numColumns = 4;
