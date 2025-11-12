@@ -10,7 +10,7 @@ const songs = [
     singer: 'Soniq Branding',
     mp3: require('./tracks/BodyFreak.mp3'),
     image: require('../assets/songCovers/test.png'),
-    difficulty: 'easy',
+    difficulty: 'Easy',
     timings: {
       left: timingsS1L,
       right: timingsS1R,
@@ -22,7 +22,7 @@ const songs = [
     singer: 'Funky Giraffe',
     mp3: require('./tracks/AreYouReadyforMeBaby.mp3'),
     image: require('../assets/songCovers/test.png'),
-    difficulty: 'hard',
+    difficulty: 'Hard',
     timings: {
       left: timingsS2L,
       right: timingsS2R,

@@ -146,9 +146,10 @@ const styles = StyleSheet.create({
   },
   songDifficulty: {
     fontSize: 12,
-    color: '#666',
+    color: '#000000ff',
     marginTop: 3,
     textAlign: 'center',
+    fontWeight: '800',
   },
   pinkBorder: {
     position: 'absolute',
