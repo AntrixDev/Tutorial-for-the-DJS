@@ -3,7 +3,20 @@ import timingsS1R from './beatmaps/beatmapS1R';
 import timingsS2L from './beatmaps/beatmapS2L';
 import timingsS2R from './beatmaps/beatmapS2R';
 
-const songs = [
+export interface Song {
+  id: number;
+  title: string;
+  singer: string;
+  mp3: any;
+  image: any;
+  difficulty: string;
+  timings: {
+    left: any;
+    right: any;
+  };
+}
+
+const songs: Song[] = [
   {
     id: 1,
     title: 'Body Freak',
