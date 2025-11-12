@@ -5,22 +5,22 @@ import { Card } from "./Card";
 
 const cards = [
   {
-    source: require("../assets/TUTsixth.png"),
+    source: require("../assets/Guide/TUTsixth.png"),
   },
   {
-    source: require("../assets/TUTfifth.png"),
+    source: require("../assets/Guide/TUTfifth.png"),
   },
   {
-    source: require("../assets/TUTfourth.png"),
+    source: require("../assets/Guide/TUTfourth.png"),
   },
   {
-    source: require("../assets/TUTthird.png"),
+    source: require("../assets/Guide/TUTthird.png"),
   },
   {
-    source: require("../assets/TUTsecond.png"),
+    source: require("../assets/Guide/TUTsecond.png"),
   },
   {
-    source: require("../assets/TUTfirst.png"),
+    source: require("../assets/Guide/TUTfirst.png"),
   },
 ];
 
@@ -31,7 +31,7 @@ export const Guide = () => {
   return (
     <>
       {cards.map((card, index) => (
-        <Card card={card} key={index} index={index} shuffleBack={shuffleBack} backgroundImage={require("../assets/CardBckg.png")} />
+        <Card card={card} key={index} index={index} shuffleBack={shuffleBack} backgroundImage={require("../assets/Guide/CardBckg.png")} />
       ))}
     </>
   );

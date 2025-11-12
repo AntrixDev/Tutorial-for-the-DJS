@@ -10,7 +10,7 @@ export default function GuideScreen() {
   return (
     <View style={styles.container}>
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <ImageBackground source={require('../assets/GuideBckg.png')} style={{flex: 1}}>
+      <ImageBackground source={require('../assets/Guide/GuideBckg.png')} style={{flex: 1}}>
         <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
           <Text style={styles.arrow}>⤶</Text>
         </TouchableOpacity>

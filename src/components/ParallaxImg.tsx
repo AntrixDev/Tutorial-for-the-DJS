@@ -12,7 +12,7 @@ const SWidth = SCREEN_WIDTH;
 const SHeight = SCREEN_HEIGHT;
 
 const IMAGE_OFFSET = 30;
-const SENSITIVITY = 0.75;
+const SENSITIVITY = 0.3;
 
 const ParallaxImg = ({ img, zIndex }) => {
 
