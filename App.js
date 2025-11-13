@@ -6,11 +6,14 @@ import GuideScreen from './src/screens/GuideScreen';
 import SongSelect from './src/screens/SongSelectScreen';
 import DescSong from './src/screens/DescSong';
 import Game from './src/screens/GameScreen';
+import Test from './src/screens/TestScreen';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 const Stack = createNativeStackNavigator();
 
 export default function App() {
   return (
+    <GestureHandlerRootView style={{ flex: 1 }}>
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Menu" screenOptions={{ headerShown: false }}>
         <Stack.Screen name="Menu" component={MenuScreen} />
@@ -18,7 +21,9 @@ export default function App() {
         <Stack.Screen name="SongSelect" component={SongSelect} />
         <Stack.Screen name="DescSong" component={DescSong} />
         <Stack.Screen name="Game" component={Game} />
+        <Stack.Screen name="Test" component={Test} />
         </Stack.Navigator>
     </NavigationContainer>
+    </GestureHandlerRootView>
   );
 }
