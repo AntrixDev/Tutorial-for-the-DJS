@@ -55,7 +55,7 @@ export default function GameScreen({ route }) {
 
   const handleGoHome = () => {
     setModalVisible(false);
-    navigation.navigate('SongSelect');
+    navigation.navigate('Menu');
   };
 
   return (
@@ -128,7 +128,7 @@ const styles = StyleSheet.create({
   },
   countdownText: {
     color: '#fff',
-    fontSize: 72,
+    fontSize: 180,
     fontWeight: '900',
     textShadowColor: '#000',
     textShadowOffset: { width: 3, height: 3 },
