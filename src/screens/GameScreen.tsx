@@ -1,37 +1,62 @@
-import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, ImageBackground, Text, TouchableOpacity, Modal } from 'react-native';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
+import { View, StyleSheet, ImageBackground, Text, TouchableOpacity, Modal, Dimensions } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-// import { Audio } from 'expo-audio';
+import { SCREEN_WIDTH } from '../screenWH';
+
+const SWidth = SCREEN_WIDTH;
 
 export default function GameScreen({ route }) {
   const { mp3 } = route.params;
-  const [countdown, setCountdown] = useState<number | string>(3);
+  const [countdown, setCountdown] = useState<string>('');
   const [isModalVisible, setModalVisible] = useState(false);
   const navigation = useNavigation<any>();
+  const timerRefs = useRef<NodeJS.Timeout[]>([]);
+
+  const clearTimers = useCallback(() => {
+    timerRefs.current.forEach(clearTimeout);
+    timerRefs.current = [];
+  }, []);
+
+  const startCountdown = useCallback(() => {
+    clearTimers();
+    setCountdown('3');
+    const startTime = Date.now();
+    const interval = setInterval(() => {
+    const elapsed = Date.now() - startTime;
+    const nextCount = 3 - Math.floor(elapsed / 1000);
+    if (nextCount > 0) {
+      setCountdown(nextCount.toString());
+    } else if (nextCount === 0) {
+      setCountdown('GO!');
+    } else {
+      clearInterval(interval);
+      timerRefs.current = timerRefs.current.filter(t => t !== interval);
+      setCountdown('');
+      //start audio start gm
+    }
+  }, 1000);
+  timerRefs.current.push(interval);
+}, [clearTimers]);
 
   useEffect(() => {
-    let timer: NodeJS.Timeout;
-
-    const startCountdown = () => {
-      let count = 3;
-      timer = setInterval(() => {
-        if (count > 1) {
-          count -= 1;
-          setCountdown(count);
-        } else if (count === 1) {
-          count = 0;
-          setCountdown('GO!');
-        } else {
-          clearInterval(timer);
-          setCountdown('');
-        }
-      }, 1000);
-    };
-
     startCountdown();
+    return clearTimers;
+  }, [startCountdown, clearTimers]);
 
-    return () => clearInterval(timer);
-  }, []);
+  const handleResume = () => {
+    setModalVisible(false);
+    startCountdown();
+  };
+
+  const handleRestart = () => {
+    setModalVisible(false);
+    startCountdown();
+  };
+
+  const handleGoHome = () => {
+    setModalVisible(false);
+    navigation.navigate('SongSelect');
+  };
 
   return (
     <ImageBackground
@@ -47,20 +72,36 @@ export default function GameScreen({ route }) {
         </View>
       ) : null}
       <Modal
-        animationType="slide"
+        animationType="fade"
         transparent={true}
         visible={isModalVisible}
         onRequestClose={() => setModalVisible(false)}
       >
         <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
+          <View style={[styles.modalContent]}>
             <Text style={styles.modalTitle}>Menu</Text>
-            <TouchableOpacity
-              style={styles.closeButton}
-              onPress={() => setModalVisible(false)}
-            >
-              <Text style={styles.closeButtonText}>Close</Text>
-            </TouchableOpacity>
+            <Text style={styles.scoreText}>Current Score: 0</Text>
+            <Text style={styles.scoreText}>Best Score: -</Text>
+            <View style={styles.buttonRow}>
+              <TouchableOpacity
+                style={[styles.menuItemButton]}
+                onPress={handleResume}
+              >
+                <Text style={styles.buttonText}>Resume</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.menuItemButton]}
+                onPress={handleRestart}
+              >
+                <Text style={styles.buttonText}>Restart</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.menuItemButton]}
+                onPress={handleGoHome}
+              >
+                <Text style={styles.buttonText}>Home</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
       </Modal>
@@ -103,11 +144,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     alignItems: 'center',
     justifyContent: 'center',
-    zIndex: 10,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 3,
+    zIndex: 100,
     borderWidth: 4,
     borderColor: '#000',
   },
@@ -120,27 +157,43 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   modalContent: {
-    backgroundColor: '#fff',
+    backgroundColor: '#ffff',
     borderRadius: 10,
-    padding: 20,
-    width: '40%',
+    paddingVertical: 25,
     alignItems: 'center',
+    width: SWidth * 0.5,
   },
   modalTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20,
+    fontSize: 30,
+    fontWeight: '900',
+    marginBottom: 10,
+    color: '#000',
   },
-  closeButton: {
+  scoreText: {
+    fontSize: 18,
+    color: '#000',
+    marginBottom: 5,
+  },
+  buttonRow: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    flexWrap: 'wrap',
     marginTop: 20,
-    backgroundColor: '#000000ff',
-    padding: 10,
-    borderRadius: 5,
   },
-  closeButtonText: {
+  menuItemButton: {
+    height: 55,
+    backgroundColor: '#000',
+    marginHorizontal: 5,
+    marginVertical: 5,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '40%',
+  },
+  buttonText: {
+    fontSize: 18,
     color: '#fff',
     fontWeight: 'bold',
   },
