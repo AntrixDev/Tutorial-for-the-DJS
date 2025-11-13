@@ -10,6 +10,7 @@ import {
 import { useNavigation } from '@react-navigation/native';
 import songs, { Song } from '../songs/songs';
 import { SCREEN_WIDTH, SCREEN_HEIGHT } from '../screenWH';
+import BackButton from '../components/BackButton';
 
 const SWidth = SCREEN_WIDTH;
 const SHeight = SCREEN_HEIGHT;
@@ -57,9 +58,7 @@ export default function SongSelectScreen() {
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-        <Text style={styles.arrow}>⤶</Text>
-      </TouchableOpacity>
+      <BackButton />
       <View style={[styles.songListContainer, { width: containerWidth, height: SHeight }]}>
         <FlatList
           data={songs}
@@ -83,29 +82,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#000000ff',
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  backButton: {
-    position: 'absolute',
-    top: 25,
-    left: 25,
-    width: 50,
-    height: 50,
-    backgroundColor: '#fff',
-    borderRadius: 8,
-    alignItems: 'center',
-    justifyContent: 'center',
-    zIndex: 10,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 3,
-    borderWidth: 4,
-    borderColor: '#000',
-  },
-  arrow: {
-    fontSize: 30,
-    color: '#000',
-    fontWeight: 'bold',
   },
   songListContainer: {
     backgroundColor: 'transparent',
