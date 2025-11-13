@@ -1,10 +1,9 @@
 import React from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
+import { View, Text, Image, StyleSheet, TouchableOpacity} from 'react-native';
 import BackButton from '../components/BackButton';
+import { SCREEN_WIDTH } from '../screenWH';
 
-const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 const SWidth = SCREEN_WIDTH;
-const SHeight = SCREEN_HEIGHT;
 
 export default function DescSong({ route }) {
   const song = route.params.song;
@@ -24,24 +23,11 @@ export default function DescSong({ route }) {
         <View style={styles.progressContainer}>
           <View style={styles.progressFill} />
         </View>
-        <View style={styles.controlsRow}>
-          <Text style={styles.time}>1:57</Text>
-          <TouchableOpacity onPress={() => console.log('Rewind pressed')}>
-            {/* <Image source={require('../assets/rewind.png')} style={styles.controlImage} /> */}
+        <View style={styles.scoreSection}>
+          <Text style={styles.topScore}>Top Score: {song.topScore || 0}</Text>
+          <TouchableOpacity style={styles.playButton} onPress={() => console.log('Play pressed')}>
+            <Text style={styles.playButtonText}>Play ➭</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => console.log('Pause pressed')}>
-            {/* <Image source={require('../assets/pause.png')} style={styles.controlImage} /> */}
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => console.log('Forward pressed')}>
-            {/* <Image source={require('../assets/forward.png')} style={styles.controlImage} /> */}
-          </TouchableOpacity>
-          <Text style={styles.time}>-0:34</Text>
-        </View>
-        <View style={styles.volumeRow}>
-          <View style={styles.sliderTrack}>
-            <View style={styles.sliderFill} />
-            <View style={styles.sliderKnob} />
-          </View>
         </View>
       </View>
     </View>
@@ -58,9 +44,9 @@ const styles = StyleSheet.create({
   card: {
     backgroundColor: '#333',
     borderRadius: 20,
-    padding: 15,
+    padding: 20,
     alignItems: 'center',
-    width: SWidth * 0.9,
+    width: SWidth * 0.75,
   },
   topRow: {
     flexDirection: 'row',
@@ -70,6 +56,7 @@ const styles = StyleSheet.create({
   image: {
     width: SWidth * 0.2,
     height: SWidth * 0.2,
+    borderRadius: 10,
     backgroundColor: '#fff',
   },
   details: {
@@ -77,78 +64,51 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   title: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: 'bold',
     color: '#fff',
   },
   singer: {
     fontSize: 16,
-    color: '#fff',
+    color: '#ccc',
   },
   difficulty: {
     fontSize: 14,
-    color: '#fff',
+    color: '#aaa',
   },
   progressContainer: {
     width: '100%',
-    height: 2,
+    height: 4,
     backgroundColor: '#555',
-    marginTop: 15,
-    marginBottom: 5,
+    marginTop: 20,
+    borderRadius: 2,
   },
   progressFill: {
     width: '70%',
-    height: 2,
+    height: 4,
     backgroundColor: '#fff',
+    borderRadius: 2,
   },
-  controlsRow: {
-    flexDirection: 'row',
+  scoreSection: {
     alignItems: 'center',
-    justifyContent: 'space-between',
-    width: '100%',
+    marginTop: 20,
   },
-  time: {
-    fontSize: 12,
+  topScore: {
+    fontSize: 16,
     color: '#fff',
+    marginBottom: 20,
   },
-  controlImage: {
-    width: 30,
-    height: 30,
-    tintColor: '#fff',
-    marginHorizontal: 10,
+  playButton: {
+    backgroundColor: '#ffffffff',
+    paddingVertical: 8,
+    paddingHorizontal: 14,
+    borderRadius: 30,
+    borderWidth: 1,
+    borderColor: '#aaa',
   },
-  volumeRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    width: '100%',
-    marginTop: 15,
-  },
-  volumeImage: {
-    width: 20,
-    height: 20,
-    tintColor: '#fff',
-  },
-  sliderTrack: {
-    flex: 1,
-    height: 2,
-    backgroundColor: '#555',
-    marginHorizontal: 10,
-    position: 'relative',
-  },
-  sliderFill: {
-    position: 'absolute',
-    left: 0,
-    width: '50%',
-    height: 2,
-    backgroundColor: '#fff',
-  },
-  sliderKnob: {
-    position: 'absolute',
-    left: '50%',
-    top: -4,
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: '#fff',
+  playButtonText: {
+    fontSize: 18,
+    fontWeight: '800',
+    color: '#0f0f0fff',
   },
 });
