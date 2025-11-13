@@ -5,6 +5,7 @@ import MenuScreen from './src/screens/MenuScreen';
 import GuideScreen from './src/screens/GuideScreen';
 import SongSelect from './src/screens/SongSelectScreen';
 import DescSong from './src/screens/DescSong';
+import Game from './src/screens/GameScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -16,6 +17,7 @@ export default function App() {
         <Stack.Screen name="Guide" component={GuideScreen} />
         <Stack.Screen name="SongSelect" component={SongSelect} />
         <Stack.Screen name="DescSong" component={DescSong} />
+        <Stack.Screen name="Game" component={Game} />
         </Stack.Navigator>
     </NavigationContainer>
   );

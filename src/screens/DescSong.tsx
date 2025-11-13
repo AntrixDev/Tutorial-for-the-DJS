@@ -2,10 +2,12 @@ import React from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity} from 'react-native';
 import BackButton from '../components/BackButton';
 import { SCREEN_WIDTH } from '../screenWH';
+import { useNavigation } from '@react-navigation/native';
 
 const SWidth = SCREEN_WIDTH;
 
 export default function DescSong({ route }) {
+  const navigation = useNavigation<any>();
   const song = route.params.song;
 
   return (
@@ -25,7 +27,12 @@ export default function DescSong({ route }) {
         </View>
         <View style={styles.scoreSection}>
           <Text style={styles.topScore}>Top Score: {song.topScore || 0}</Text>
-          <TouchableOpacity style={styles.playButton} onPress={() => console.log('Play pressed')}>
+          <TouchableOpacity 
+            style={styles.playButton}
+            onPress={() => {
+              navigation.navigate('Game', { mp3: song.mp3 });
+            }}
+          >
             <Text style={styles.playButtonText}>Play ➭</Text>
           </TouchableOpacity>
         </View>
