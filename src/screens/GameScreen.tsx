@@ -22,7 +22,6 @@ export default function GameScreen({ route }) {
   const timerRefs = useRef<NodeJS.Timeout[]>([]);
   const lastPauseTime = useRef<number | null>(null);
   const [gameStarted, setGameStarted] = useState(false);
-
   const [requiredStateLeft, setRequiredStateLeft] = useState<RequiredState | null>(null);
   const [requiredStateRight, setRequiredStateRight] = useState<RequiredState | null>(null);
   const [triggerSliceGroupLeft, setTriggerSliceGroupLeft] = useState<string | null>(null);
@@ -34,8 +33,8 @@ export default function GameScreen({ route }) {
   const [gameOver, setGameOver] = useState(false);
   const [paused, setPaused] = useState(true);
   const [showCentralError, setShowCentralError] = useState(false);
-  const fadeAnim = useRef(new Animated.Value(0)).current;
 
+  const fadeAnim = useRef(new Animated.Value(0)).current;
   const directions = ['vertical', 'horizontal', 'diagLeft', 'diagRight'];
   const directionToGroup: { [key: string]: string } = {
     vertical: 'gh',
@@ -109,9 +108,7 @@ export default function GameScreen({ route }) {
     ]).start(() => setShowCentralError(false));
   };
 
-  const handleSuccess = () => {
-    setScore((s) => s + 10);
-  };
+  const handleSuccess = () => setScore((s) => s + 10);
 
   const handleError = () => {
     setLives((l) => {
@@ -126,6 +123,7 @@ export default function GameScreen({ route }) {
     flashError();
   };
 
+  // LEFT beatmap
   useEffect(() => {
     if (gameOver || paused || nextBeatIndexLeft >= beatmapL.length) return;
 
@@ -133,8 +131,8 @@ export default function GameScreen({ route }) {
     while (newIndex < beatmapL.length && status.currentTime >= beatmapL[newIndex]) {
       const beatIndex = newIndex;
       const dir = directions[Math.floor(Math.random() * directions.length)];
-
       setRequiredStateLeft({ dir, beatIndex });
+
       setTimeout(() => {
         if (requiredStateLeft?.beatIndex === beatIndex) {
           const group = directionToGroup[dir];
@@ -147,11 +145,10 @@ export default function GameScreen({ route }) {
 
       newIndex++;
     }
-    if (newIndex > nextBeatIndexLeft) {
-      setNextBeatIndexLeft(newIndex);
-    }
-  }, [status.currentTime, nextBeatIndexLeft, gameOver, paused, requiredStateLeft, beatmapL, directions, directionToGroup]);
+    if (newIndex > nextBeatIndexLeft) setNextBeatIndexLeft(newIndex);
+  }, [status.currentTime, nextBeatIndexLeft, gameOver, paused, requiredStateLeft, beatmapL]);
 
+  // RIGHT beatmap
   useEffect(() => {
     if (gameOver || paused || nextBeatIndexRight >= beatmapR.length) return;
 
@@ -159,8 +156,8 @@ export default function GameScreen({ route }) {
     while (newIndex < beatmapR.length && status.currentTime >= beatmapR[newIndex]) {
       const beatIndex = newIndex;
       const dir = directions[Math.floor(Math.random() * directions.length)];
-
       setRequiredStateRight({ dir, beatIndex });
+
       setTimeout(() => {
         if (requiredStateRight?.beatIndex === beatIndex) {
           const group = directionToGroup[dir];
@@ -173,10 +170,17 @@ export default function GameScreen({ route }) {
 
       newIndex++;
     }
-    if (newIndex > nextBeatIndexRight) {
-      setNextBeatIndexRight(newIndex);
+    if (newIndex > nextBeatIndexRight) setNextBeatIndexRight(newIndex);
+  }, [status.currentTime, nextBeatIndexRight, gameOver, paused, requiredStateRight, beatmapR]);
+
+  useEffect(() => {
+    if (status.isLoaded && status.duration && !gameOver && gameStarted && status.currentTime >= status.duration - 40) {
+      setGameOver(true);
+      player.pause();
+      setScore(s => s + 100);
+      setGameOverModalVisible(true);
     }
-  }, [status.currentTime, nextBeatIndexRight, gameOver, paused, requiredStateRight, beatmapR, directions, directionToGroup]);
+  }, [status, gameOver, gameStarted, player]);
 
   const handleResume = () => {
     setModalVisible(false);
@@ -200,7 +204,7 @@ export default function GameScreen({ route }) {
     startCountdown();
   };
 
-  const handleGoHome = () => {
+  const handleGoMenu = () => {
     setModalVisible(false);
     player.remove();
     navigation.navigate('Menu');
@@ -208,141 +212,89 @@ export default function GameScreen({ route }) {
 
   const handleGameOverRestart = () => {
     setGameOverModalVisible(false);
-    player.pause();
-    player.seekTo(0);
-    setScore(0);
-    setLives(3);
-    setNextBeatIndexLeft(0);
-    setNextBeatIndexRight(0);
-    setGameOver(false);
-    setRequiredStateLeft(null);
-    setRequiredStateRight(null);
-    setTriggerSliceGroupLeft(null);
-    setTriggerSliceGroupRight(null);
-    setGameStarted(false);
-    startCountdown();
+    handleRestart();
   };
 
-  const handleGameOverGoHome = () => {
+  const handleGameOverGoMenu = () => {
     setGameOverModalVisible(false);
     player.remove();
     navigation.navigate('Menu');
   };
 
-  const hearts = '❤️'.repeat(lives);
+  const hearts = '❤︎'.repeat(lives);
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <ImageBackground
-        source={require('../assets/gameplay/gameBckg.png')}
-        style={styles.container}
-      >
+      <ImageBackground source={require('../assets/gameplay/gameBckg.png')} style={styles.container}>
+
+        {/* Menu Button (left corner) */}
         <TouchableOpacity style={styles.menuButton} onPress={() => { setModalVisible(true); player.pause(); setPaused(true); }}>
           <Text style={styles.arrow}>☰</Text>
         </TouchableOpacity>
+
+        {/* ⭐ NEW TOP BAR ⭐ */}
         <View style={styles.topBar}>
-          <View style={styles.empty} />
-          <Text style={styles.hudText}>{score}</Text>
-          <Text style={styles.hudText}>{hearts}</Text>
+          <Text style={styles.scoreCenter}>{score}</Text>
+          <Text style={styles.heartsRight}>{hearts}</Text>
         </View>
+
         {countdown ? (
           <View style={styles.overlay}>
             <Text style={styles.countdownText}>{countdown}</Text>
           </View>
         ) : null}
+
         <View style={styles.vinylContainer}>
           {showCentralError && (
-            <View style={styles.centralError} >
+            <Animated.View style={[styles.centralError, { opacity: fadeAnim }]}>
               <Image source={require('../assets/gameplay/error.png')} style={styles.centralX} />
-            </View>
+            </Animated.View>
           )}
+
           <Vinyl
             requiredDirection={requiredStateLeft?.dir || null}
             triggerSliceGroup={triggerSliceGroupLeft}
-            onCorrect={() => {
-              handleSuccess();
-              setRequiredStateLeft(null);
-            }}
-            onError={() => {
-              handleError();
-              setRequiredStateLeft(null);
-            }}
+            onCorrect={() => { handleSuccess(); setRequiredStateLeft(null); }}
+            onError={() => { handleError(); setRequiredStateLeft(null); }}
           />
+
           <Vinyl
             requiredDirection={requiredStateRight?.dir || null}
             triggerSliceGroup={triggerSliceGroupRight}
-            onCorrect={() => {
-              handleSuccess();
-              setRequiredStateRight(null);
-            }}
-            onError={() => {
-              handleError();
-              setRequiredStateRight(null);
-            }}
+            onCorrect={() => { handleSuccess(); setRequiredStateRight(null); }}
+            onError={() => { handleError(); setRequiredStateRight(null); }}
           />
         </View>
-        <Modal
-          animationType="fade"
-          transparent={true}
-          visible={isModalVisible}
-          onRequestClose={() => setModalVisible(false)}
-        >
+
+        {/* Pause Modal */}
+        <Modal animationType="fade" transparent visible={isModalVisible}>
           <View style={styles.modalOverlay}>
-            <View style={[styles.modalContent]}>
+            <View style={styles.modalContent}>
               <Text style={styles.modalTitle}>Menu</Text>
               <Text style={styles.scoreText}>Current Score: {score}</Text>
-              <Text style={styles.scoreText}>Best Score: -</Text>
               <View style={styles.buttonRow}>
-                <TouchableOpacity
-                  style={[styles.menuItemButton]}
-                  onPress={handleResume}
-                >
-                  <Text style={styles.buttonText}>Resume</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={[styles.menuItemButton]}
-                  onPress={handleRestart}
-                >
-                  <Text style={styles.buttonText}>Restart</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={[styles.menuItemButton]}
-                  onPress={handleGoHome}
-                >
-                  <Text style={styles.buttonText}>Home</Text>
-                </TouchableOpacity>
+                <TouchableOpacity style={styles.menuItemButton} onPress={handleResume}><Text style={styles.buttonText}>Resume</Text></TouchableOpacity>
+                <TouchableOpacity style={styles.menuItemButton} onPress={handleRestart}><Text style={styles.buttonText}>Restart</Text></TouchableOpacity>
+                <TouchableOpacity style={styles.menuItemButton} onPress={handleGoMenu}><Text style={styles.buttonText}>Menu</Text></TouchableOpacity>
               </View>
             </View>
           </View>
         </Modal>
-        <Modal
-          animationType="fade"
-          transparent={true}
-          visible={isGameOverModalVisible}
-          onRequestClose={() => setGameOverModalVisible(false)}
-        >
+
+        {/* Game Over Modal */}
+        <Modal animationType="fade" transparent visible={isGameOverModalVisible}>
           <View style={styles.modalOverlay}>
-            <View style={[styles.modalContent]}>
+            <View style={styles.modalContent}>
               <Text style={styles.modalTitle}>Game Over</Text>
               <Text style={styles.scoreText}>Final Score: {score}</Text>
-              <Text style={styles.scoreText}>Best Score: -</Text>
               <View style={styles.buttonRow}>
-                <TouchableOpacity
-                  style={[styles.menuItemButton]}
-                  onPress={handleGameOverRestart}
-                >
-                  <Text style={styles.buttonText}>Restart</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={[styles.menuItemButton]}
-                  onPress={handleGameOverGoHome}
-                >
-                  <Text style={styles.buttonText}>Home</Text>
-                </TouchableOpacity>
+                <TouchableOpacity style={styles.menuItemButton} onPress={handleGameOverRestart}><Text style={styles.buttonText}>Restart</Text></TouchableOpacity>
+                <TouchableOpacity style={styles.menuItemButton} onPress={handleGameOverGoMenu}><Text style={styles.buttonText}>Menu</Text></TouchableOpacity>
               </View>
             </View>
           </View>
         </Modal>
+
       </ImageBackground>
     </GestureHandlerRootView>
   );
@@ -355,30 +307,35 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: 'black',
   },
-  overlay: {
+  topBar: {
     position: 'absolute',
     top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
+    height: '10%',
+    width: '100%',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.3)',
+    marginTop: 10,
   },
-  countdownText: {
-    color: '#fff',
-    fontSize: 72,
+  scoreCenter: {
+    position: 'absolute',
+    alignSelf: 'center',
+    fontSize: 30,
     fontWeight: '900',
-    textShadowColor: '#000',
-    textShadowOffset: { width: 3, height: 3 },
-    textShadowRadius: 10,
+    color: 'white',
+  },
+  heartsRight: {
+    position: 'absolute',
+    right: 20,
+    fontSize: 25,
+    color: 'white',
+    fontWeight: 'bold',
   },
   menuButton: {
     position: 'absolute',
-    top: 25,
-    left: 25,
-    width: 50,
-    height: 50,
+    top: '4%',
+    left: '2%',
+    width: 45,
+    height: 35,
     backgroundColor: '#fff',
     borderRadius: 8,
     alignItems: 'center',
@@ -388,9 +345,52 @@ const styles = StyleSheet.create({
     borderColor: '#000',
   },
   arrow: {
-    fontSize: 30,
+    fontSize: 20,
     color: '#000',
     fontWeight: 'bold',
+  },
+  overlay: {
+    position: 'absolute',
+    top: 0, 
+    left: 0, 
+    right: 0, 
+    bottom: 0,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0,0,0,0.3)',
+  },
+  countdownText: {
+    color: '#fff',
+    fontSize: 72,
+    fontWeight: '900',
+    textShadowColor: '#000',
+    textShadowOffset: { width: 3, height: 3 },
+    textShadowRadius: 10,
+  },
+  vinylContainer: {
+    flex: 1,
+    width: '100%',
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    position: 'relative',
+    height: '60%',
+    bottom: 0,
+  },
+  centralError: {
+    position: 'absolute',
+    top: 50,
+    left: '50%',
+    width: 80,
+    height: 80,
+    justifyContent: 'center',
+    alignItems: 'center',
+    transform: [{ translateX: -40 }],
+    zIndex: 10,
+  },
+  centralX: {
+    width: 90,
+    height: 90,
   },
   modalOverlay: {
     flex: 1,
@@ -398,7 +398,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   modalContent: {
-    backgroundColor: '#ffff',
+    backgroundColor: '#fff',
     borderRadius: 10,
     paddingVertical: 25,
     alignItems: 'center',
@@ -413,66 +413,25 @@ const styles = StyleSheet.create({
   scoreText: {
     fontSize: 18,
     color: '#000',
-    marginBottom: 5,
   },
   buttonRow: {
     flexDirection: 'row',
-    justifyContent: 'center',
     flexWrap: 'wrap',
     marginTop: 20,
+    justifyContent: 'center',
   },
   menuItemButton: {
     height: 55,
+    width: '40%',
     backgroundColor: '#000',
-    marginHorizontal: 5,
-    marginVertical: 5,
     borderRadius: 10,
+    margin: 5,
     alignItems: 'center',
     justifyContent: 'center',
-    width: '40%',
   },
   buttonText: {
     fontSize: 18,
     color: '#fff',
     fontWeight: 'bold',
-  },
-  topBar: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-end',
-    paddingHorizontal: 20,
-    height: '13%',
-    width: '100%',
-  },
-  empty: {
-    width: 50,
-  },
-  hudText: {
-    fontSize: 25,
-    color: 'white',
-    fontWeight: 'bold',
-  },
-  vinylContainer: {
-    flex: 1,
-    width: '100%',
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    alignItems: 'center',
-    position: 'relative',
-  },
-  centralError: {
-    position: 'absolute',
-    top: 50,
-    left: '50%',
-    width: 80,
-    height: 80,
-    justifyContent: 'center',
-    alignItems: 'center',
-    zIndex: 10,
-    transform: [{ translateX: -40 }],
-  },
-  centralX: {
-    width: 60,
-    height: 60,
   },
 });
