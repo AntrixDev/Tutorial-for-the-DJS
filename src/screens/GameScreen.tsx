@@ -226,7 +226,7 @@ export default function GameScreen({ route }) {
   const handleGameOverGoHome = () => {
     setGameOverModalVisible(false);
     player.remove();
-    navigation.navigate('Game', {});
+    navigation.navigate('Game');
   };
 
   const hearts = '❤️'.repeat(lives);
