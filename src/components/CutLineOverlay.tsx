@@ -14,11 +14,25 @@ const groupToAngle: { [key: string]: string } = {
   cd: '45deg',
 };
 
+const gradientOptions = [
+  '#fe737b',
+  '#fed36b',
+  '#fffe98',
+  '#72e2ff',
+  '#5f95fe',
+  '#9264d9',
+  '#ff9efe',
+];
+
 export default function CutLineOverlay({ size, group }: CutLineOverlayProps) {
   if (!group) return null;
 
   const length = size * 1.4;
   const angle = groupToAngle[group];
+
+  const randomColor = React.useMemo(() => {
+    return gradientOptions[Math.floor(Math.random() * gradientOptions.length)];
+  }, [group]);
 
   return (
     <View style={[styles.overlay, { width: size, height: size }]}>
@@ -33,7 +47,7 @@ export default function CutLineOverlay({ size, group }: CutLineOverlayProps) {
           left: '50%',
           marginLeft: -4,
           marginTop: -length / 2,
-          shadowColor: '#ca2c83ff',
+          shadowColor: '#000000ff',
           shadowOffset: { width: 0, height: 0 },
           shadowOpacity: 1,
           shadowRadius: 16,
@@ -45,9 +59,9 @@ export default function CutLineOverlay({ size, group }: CutLineOverlayProps) {
         <LinearGradient
           colors={[
             'transparent',
-            '#f771a3',
+            randomColor,
             '#ffffffff',
-            '#f771a3',
+            randomColor,
             'transparent',
           ]}
           style={{ flex: 1 }}
