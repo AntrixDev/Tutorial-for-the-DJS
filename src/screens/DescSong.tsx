@@ -30,7 +30,7 @@ export default function DescSong({ route }) {
           <TouchableOpacity 
             style={styles.playButton}
             onPress={() => {
-              navigation.navigate('Test', { mp3: song.mp3, beatmapL: song.left, beatmapR: song.right });
+              navigation.navigate('Game', { mp3: song.mp3, beatmapL: song.left, beatmapR: song.right });
             }}
           >
             <Text style={styles.playButtonText}>Play ➭</Text>
