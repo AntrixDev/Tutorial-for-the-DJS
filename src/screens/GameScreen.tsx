@@ -315,6 +315,34 @@ export default function GameScreen({ route }) {
             </View>
           </View>
         </Modal>
+        <Modal
+          animationType="fade"
+          transparent={true}
+          visible={isGameOverModalVisible}
+          onRequestClose={() => setGameOverModalVisible(false)}
+        >
+          <View style={styles.modalOverlay}>
+            <View style={[styles.modalContent]}>
+              <Text style={styles.modalTitle}>Game Over</Text>
+              <Text style={styles.scoreText}>Final Score: {score}</Text>
+              <Text style={styles.scoreText}>Best Score: -</Text>
+              <View style={styles.buttonRow}>
+                <TouchableOpacity
+                  style={[styles.menuItemButton]}
+                  onPress={handleGameOverRestart}
+                >
+                  <Text style={styles.buttonText}>Restart</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[styles.menuItemButton]}
+                  onPress={handleGameOverGoHome}
+                >
+                  <Text style={styles.buttonText}>Home</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        </Modal>
       </ImageBackground>
     </GestureHandlerRootView>
   );
