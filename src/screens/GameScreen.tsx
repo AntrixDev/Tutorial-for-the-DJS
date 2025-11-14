@@ -17,6 +17,7 @@ export default function GameScreen({ route }) {
   const { mp3, beatmapL, beatmapR } = route.params;
   const [countdown, setCountdown] = useState<string>('');
   const [isModalVisible, setModalVisible] = useState(false);
+  const [isGameOverModalVisible, setGameOverModalVisible] = useState(false);
   const navigation = useNavigation<any>();
   const timerRefs = useRef<NodeJS.Timeout[]>([]);
   const lastPauseTime = useRef<number | null>(null);
@@ -118,6 +119,7 @@ export default function GameScreen({ route }) {
       if (newLives <= 0) {
         setGameOver(true);
         player.pause();
+        setGameOverModalVisible(true);
       }
       return newLives;
     });
@@ -178,12 +180,13 @@ export default function GameScreen({ route }) {
 
   const handleResume = () => {
     setModalVisible(false);
-    player.play();
-    setPaused(false);
+    startCountdown();
   };
 
   const handleRestart = () => {
     setModalVisible(false);
+    player.pause();
+    player.seekTo(0);
     setScore(0);
     setLives(3);
     setNextBeatIndexLeft(0);
@@ -199,8 +202,34 @@ export default function GameScreen({ route }) {
 
   const handleGoHome = () => {
     setModalVisible(false);
+    player.remove();
     navigation.navigate('Menu');
   };
+
+  const handleGameOverRestart = () => {
+    setGameOverModalVisible(false);
+    player.pause();
+    player.seekTo(0);
+    setScore(0);
+    setLives(3);
+    setNextBeatIndexLeft(0);
+    setNextBeatIndexRight(0);
+    setGameOver(false);
+    setRequiredStateLeft(null);
+    setRequiredStateRight(null);
+    setTriggerSliceGroupLeft(null);
+    setTriggerSliceGroupRight(null);
+    setGameStarted(false);
+    startCountdown();
+  };
+
+  const handleGameOverGoHome = () => {
+    setGameOverModalVisible(false);
+    player.remove();
+    navigation.navigate('Game', {});
+  };
+
+  const hearts = '❤️'.repeat(lives);
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
@@ -212,8 +241,9 @@ export default function GameScreen({ route }) {
           <Text style={styles.arrow}>☰</Text>
         </TouchableOpacity>
         <View style={styles.topBar}>
+          <View style={styles.empty} />
           <Text style={styles.hudText}>{score}</Text>
-          <Text style={styles.hudText}>{lives}</Text>
+          <Text style={styles.hudText}>{hearts}</Text>
         </View>
         {countdown ? (
           <View style={styles.overlay}>
@@ -385,6 +415,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     height: '13%',
     width: '100%',
+  },
+  empty: {
+    width: 50,
   },
   hudText: {
     fontSize: 25,
