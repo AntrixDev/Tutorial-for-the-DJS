@@ -5,7 +5,7 @@ import ParallaxImg from './ParallaxImg'
 const Parallax = ({ layers }) => {
   return (
     <>
-    {layers.reverse().map((layer, index) => (
+    {[...layers].reverse().map((layer, index) => (
         <ParallaxImg key={`layer_${index}`} img={layer} zIndex={index + 1}/>
       ))}
     </>
