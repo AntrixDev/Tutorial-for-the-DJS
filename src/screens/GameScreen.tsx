@@ -22,6 +22,7 @@ export default function GameScreen({ route }) {
   const timerRefs = useRef<NodeJS.Timeout[]>([]);
   const lastPauseTime = useRef<number | null>(null);
   const [gameStarted, setGameStarted] = useState(false);
+  
   const [requiredStateLeft, setRequiredStateLeft] = useState<RequiredState | null>(null);
   const [requiredStateRight, setRequiredStateRight] = useState<RequiredState | null>(null);
   const [triggerSliceGroupLeft, setTriggerSliceGroupLeft] = useState<string | null>(null);
@@ -123,7 +124,6 @@ export default function GameScreen({ route }) {
     flashError();
   };
 
-  // LEFT beatmap
   useEffect(() => {
     if (gameOver || paused || nextBeatIndexLeft >= beatmapL.length) return;
 
@@ -148,7 +148,6 @@ export default function GameScreen({ route }) {
     if (newIndex > nextBeatIndexLeft) setNextBeatIndexLeft(newIndex);
   }, [status.currentTime, nextBeatIndexLeft, gameOver, paused, requiredStateLeft, beatmapL]);
 
-  // RIGHT beatmap
   useEffect(() => {
     if (gameOver || paused || nextBeatIndexRight >= beatmapR.length) return;
 
@@ -266,7 +265,6 @@ export default function GameScreen({ route }) {
           />
         </View>
 
-        {/* Pause Modal */}
         <Modal animationType="fade" transparent visible={isModalVisible}>
           <View style={styles.modalOverlay}>
             <View style={styles.modalContent}>
@@ -281,7 +279,6 @@ export default function GameScreen({ route }) {
           </View>
         </Modal>
 
-        {/* Game Over Modal */}
         <Modal animationType="fade" transparent visible={isGameOverModalVisible}>
           <View style={styles.modalOverlay}>
             <View style={styles.modalContent}>

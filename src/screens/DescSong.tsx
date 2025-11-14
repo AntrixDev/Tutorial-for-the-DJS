@@ -1,8 +1,9 @@
 import React from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity} from 'react-native';
+import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import BackButton from '../components/BackButton';
 import { SCREEN_WIDTH } from '../screenWH';
 import { useNavigation } from '@react-navigation/native';
+import { VideoView, useVideoPlayer } from 'expo-video';
 
 const SWidth = SCREEN_WIDTH;
 
@@ -10,8 +11,30 @@ export default function DescSong({ route }) {
   const navigation = useNavigation<any>();
   const song = route.params.song;
 
+  const player = useVideoPlayer(
+    require('../assets/ui/SoundBckg.mp4'),
+    (player) => {
+      player.loop = true;
+      player.play();
+      player.muted = true;
+    }
+  );
+
   return (
     <View style={styles.container}>
+      <VideoView
+        style={StyleSheet.absoluteFill}
+        player={player}
+        contentFit="cover"
+        pointerEvents="none"
+        fullscreenOptions={{ enable: false }}
+      />
+      
+      <View 
+        style={[StyleSheet.absoluteFill, styles.blockscreen]} 
+        pointerEvents="auto" 
+      />
+
       <BackButton />
       <View style={styles.card}>
         <View style={styles.topRow}>
@@ -27,7 +50,7 @@ export default function DescSong({ route }) {
         </View>
         <View style={styles.scoreSection}>
           <Text style={styles.topScore}>Top Score: {song.topScore || 0}</Text>
-          <TouchableOpacity 
+          <TouchableOpacity
             style={styles.playButton}
             onPress={() => {
               navigation.navigate('Game', { mp3: song.mp3, beatmapL: song.timings.left, beatmapR: song.timings.right });
@@ -46,10 +69,13 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#f0f0f0',
+    backgroundColor: '#000000ff',
+  },
+  blockscreen: {
+    backgroundColor: 'transparent',
   },
   card: {
-    backgroundColor: '#333',
+    backgroundColor: 'rgba(0, 0, 0, 0.8)',
     borderRadius: 20,
     padding: 20,
     alignItems: 'center',
