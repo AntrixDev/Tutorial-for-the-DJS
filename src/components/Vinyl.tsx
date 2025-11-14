@@ -1,6 +1,8 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { StyleSheet, View, useWindowDimensions, Animated, Image, Easing } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
+import { useSharedValue, useAnimatedReaction } from 'react-native-reanimated';
+import { scheduleOnRN } from 'react-native-worklets';
 import CutLineOverlay from './CutLineOverlay';
 
 interface Props {
@@ -15,8 +17,7 @@ export default function Vinyl({ requiredDirection, triggerSliceGroup, onCorrect,
   const vinylSize = Math.min(240, (dimensions.width / 2) - 40);
   const previousInsideRef = useRef(false);
   const lastInsidePos = useRef({ x: 0, y: 0 });
-  const [slicedGroup, setSlicedGroup] = useState<string | null>(null);
-  const [hasCrossed, setHasCrossed] = useState(false);
+  const [slicedGroupState, setSlicedGroupState] = useState<string | null>(null);
 
   const half1X = useRef(new Animated.Value(0)).current;
   const half1Y = useRef(new Animated.Value(0)).current;
@@ -26,7 +27,10 @@ export default function Vinyl({ requiredDirection, triggerSliceGroup, onCorrect,
   const half2Y = useRef(new Animated.Value(0)).current;
 
   const vinylRef = useRef<View | null>(null);
-  const [vinylPosition, setVinylPosition] = useState({ x: 0, y: 0 });
+  const vinylPositionSV = useSharedValue({ x: 0, y: 0 });
+  const vinylSizeSV = useSharedValue(vinylSize);
+  const hasCrossedSV = useSharedValue(false);
+  const slicedGroupSV = useSharedValue<string | null>(null);
 
   const slices = {
     ab: [require('../assets/gameplay/sliceA.png'), require('../assets/gameplay/sliceB.png')], // diagRight /
@@ -43,29 +47,46 @@ export default function Vinyl({ requiredDirection, triggerSliceGroup, onCorrect,
   };
 
   const requiredGroup = requiredDirection ? directionToGroup[requiredDirection] : null;
+  const requiredGroupSV = useSharedValue(requiredGroup);
 
   useEffect(() => {
-    if (triggerSliceGroup && !hasCrossed) {
-      setHasCrossed(true);
-      setSlicedGroup(triggerSliceGroup);
+    requiredGroupSV.value = requiredGroup;
+  }, [requiredGroup]);
+
+  useEffect(() => {
+    vinylSizeSV.value = vinylSize;
+  }, [vinylSize]);
+
+  useAnimatedReaction(
+    () => slicedGroupSV.value,
+    (value) => {
+      scheduleOnRN(setSlicedGroupState, value);
+    },
+    []
+  );
+
+  useEffect(() => {
+    if (triggerSliceGroup && !hasCrossedSV.value) {
+      hasCrossedSV.value = true;
+      slicedGroupSV.value = triggerSliceGroup;
     }
-  }, [triggerSliceGroup, hasCrossed]);
+  }, [triggerSliceGroup]);
 
   useEffect(() => {
     const measure = () => {
       vinylRef.current?.measureInWindow((x, y) => {
-        setVinylPosition({ x, y });
+        vinylPositionSV.value = { x, y };
       });
     };
     measure();
   }, [dimensions.width, dimensions.height, vinylSize]);
 
   useEffect(() => {
-    if (slicedGroup) {
+    if (slicedGroupState) {
       let half1Anims: any[] = [];
       let half2Anims: any[] = [];
 
-      if (slicedGroup === 'gh') {
+      if (slicedGroupState === 'gh') {
         half1Anims = [
           Animated.timing(half1X, { toValue: -100, duration: 300, easing: Easing.out(Easing.quad), useNativeDriver: true }),
           Animated.timing(half1Y, { toValue: dimensions.height, duration: 500, easing: Easing.in(Easing.quad), useNativeDriver: true }),
@@ -98,41 +119,43 @@ export default function Vinyl({ requiredDirection, triggerSliceGroup, onCorrect,
           half2X.setValue(0);
           half2Y.setValue(0);
           half2Rot.setValue(0);
-          setSlicedGroup(null);
-          setHasCrossed(false);
+          slicedGroupSV.value = null;
+          hasCrossedSV.value = false;
         }
       });
     }
-  }, [slicedGroup, dimensions.height]);
+  }, [slicedGroupState, dimensions.height]);
 
   const tap = Gesture.Tap().onEnd((e) => {
-    const vinylX = vinylPosition.x;
-    const vinylY = vinylPosition.y;
-    const centerX = vinylX + vinylSize / 2;
-    const centerY = vinylY + vinylSize / 2;
-    const r = vinylSize / 2;
+    'worklet';
+    const vinylX = vinylPositionSV.value.x;
+    const vinylY = vinylPositionSV.value.y;
+    const centerX = vinylX + vinylSizeSV.value / 2;
+    const centerY = vinylY + vinylSizeSV.value / 2;
+    const r = vinylSizeSV.value / 2;
     const posX = e.absoluteX;
     const posY = e.absoluteY;
     const isInside = Math.sqrt(Math.pow(posX - centerX, 2) + Math.pow(posY - centerY, 2)) <= r;
-    if (isInside && !hasCrossed) {
-      setHasCrossed(true);
-      setSlicedGroup('gh');
-      const isCorrect = requiredGroup === 'gh';
+    if (isInside && !hasCrossedSV.value) {
+      hasCrossedSV.value = true;
+      slicedGroupSV.value = 'gh';
+      const isCorrect = requiredGroupSV.value === 'gh';
       if (isCorrect) {
-        onCorrect?.();
+        scheduleOnRN(onCorrect);
       } else {
-        onError?.();
+        scheduleOnRN(onError);
       }
     }
   });
 
   const pan = Gesture.Pan()
     .onStart((e) => {
-      const vinylX = vinylPosition.x;
-      const vinylY = vinylPosition.y;
-      const centerX = vinylX + vinylSize / 2;
-      const centerY = vinylY + vinylSize / 2;
-      const r = vinylSize / 2;
+      'worklet';
+      const vinylX = vinylPositionSV.value.x;
+      const vinylY = vinylPositionSV.value.y;
+      const centerX = vinylX + vinylSizeSV.value / 2;
+      const centerY = vinylY + vinylSizeSV.value / 2;
+      const r = vinylSizeSV.value / 2;
       const posX = e.absoluteX;
       const posY = e.absoluteY;
       const isInside = Math.sqrt(Math.pow(posX - centerX, 2) + Math.pow(posY - centerY, 2)) <= r;
@@ -142,11 +165,12 @@ export default function Vinyl({ requiredDirection, triggerSliceGroup, onCorrect,
       }
     })
     .onUpdate((e) => {
-      const vinylX = vinylPosition.x;
-      const vinylY = vinylPosition.y;
-      const centerX = vinylX + vinylSize / 2;
-      const centerY = vinylY + vinylSize / 2;
-      const r = vinylSize / 2;
+      'worklet';
+      const vinylX = vinylPositionSV.value.x;
+      const vinylY = vinylPositionSV.value.y;
+      const centerX = vinylX + vinylSizeSV.value / 2;
+      const centerY = vinylY + vinylSizeSV.value / 2;
+      const r = vinylSizeSV.value / 2;
       const posX = e.absoluteX;
       const posY = e.absoluteY;
       const isInside = Math.sqrt(Math.pow(posX - centerX, 2) + Math.pow(posY - centerY, 2)) <= r;
@@ -156,16 +180,16 @@ export default function Vinyl({ requiredDirection, triggerSliceGroup, onCorrect,
       } else if (previousInsideRef.current && !isInside) {
         triggerPos = lastInsidePos.current;
       }
-      if (triggerPos && !hasCrossed) {
+      if (triggerPos && !hasCrossedSV.value) {
         const points = [
           { name: 'A', x: centerX + r * Math.cos(5 * Math.PI / 4), y: centerY + r * Math.sin(5 * Math.PI / 4), group: 'ab' },
           { name: 'C', x: centerX + r * Math.cos(7 * Math.PI / 4), y: centerY + r * Math.sin(7 * Math.PI / 4), group: 'cd' },
           { name: 'B', x: centerX + r * Math.cos(Math.PI / 4), y: centerY + r * Math.sin(Math.PI / 4), group: 'ab' },
           { name: 'D', x: centerX + r * Math.cos(3 * Math.PI / 4), y: centerY + r * Math.sin(3 * Math.PI / 4), group: 'cd' },
-          { name: 'E', x: vinylX, y: vinylY + vinylSize / 2, group: 'ef' },
-          { name: 'F', x: vinylX + vinylSize, y: vinylY + vinylSize / 2, group: 'ef' },
-          { name: 'G', x: vinylX + vinylSize / 2, y: vinylY, group: 'gh' },
-          { name: 'H', x: vinylX + vinylSize / 2, y: vinylY + vinylSize, group: 'gh' },
+          { name: 'E', x: vinylX, y: vinylY + vinylSizeSV.value / 2, group: 'ef' },
+          { name: 'F', x: vinylX + vinylSizeSV.value, y: vinylY + vinylSizeSV.value / 2, group: 'ef' },
+          { name: 'G', x: vinylX + vinylSizeSV.value / 2, y: vinylY, group: 'gh' },
+          { name: 'H', x: vinylX + vinylSizeSV.value / 2, y: vinylY + vinylSizeSV.value, group: 'gh' },
         ];
         let minDist = Infinity;
         let closestGroup: string | null = null;
@@ -177,13 +201,13 @@ export default function Vinyl({ requiredDirection, triggerSliceGroup, onCorrect,
           }
         });
         if (closestGroup) {
-          setHasCrossed(true);
-          setSlicedGroup(closestGroup);
-          const isCorrect = requiredGroup && closestGroup === requiredGroup;
+          hasCrossedSV.value = true;
+          slicedGroupSV.value = closestGroup;
+          const isCorrect = requiredGroupSV.value === closestGroup;
           if (isCorrect) {
-            onCorrect?.();
+            scheduleOnRN(onCorrect);
           } else {
-            onError?.();
+            scheduleOnRN(onError);
           }
         }
       }
@@ -194,7 +218,6 @@ export default function Vinyl({ requiredDirection, triggerSliceGroup, onCorrect,
     });
 
   const composed = Gesture.Exclusive(pan, tap);
-
 
   
   const spinValue = useRef(new Animated.Value(0)).current;
@@ -231,7 +254,6 @@ export default function Vinyl({ requiredDirection, triggerSliceGroup, onCorrect,
           <Image source={require('../assets/gameplay/sliceH.png')} style={{ width: 1, height: 1, opacity: 0 }} />
         </View>
         <View ref={vinylRef} style={{ width: vinylSize, height: vinylSize, overflow: 'visible' }}>
-          {/* Full vinyl ALWAYS spinning underneath */}
           <Animated.Image
             source={require('../assets/gameplay/vin.png')}
             style={{
@@ -243,12 +265,11 @@ export default function Vinyl({ requiredDirection, triggerSliceGroup, onCorrect,
             resizeMode="cover"
           />
 
-          {/* Sliced halves overlay ONLY during animation */}
-          {slicedGroup && (
+          {slicedGroupState && (
             <>
               <Animated.Image
                 key="half1"
-                source={slices[slicedGroup][0]}
+                source={slices[slicedGroupState][0]}
                 style={{
                   position: 'absolute',
                   top: 0,
@@ -269,7 +290,7 @@ export default function Vinyl({ requiredDirection, triggerSliceGroup, onCorrect,
               />
               <Animated.Image
                 key="half2"
-                source={slices[slicedGroup][1]}
+                source={slices[slicedGroupState][1]}
                 style={{
                   position: 'absolute',
                   top: 0,
