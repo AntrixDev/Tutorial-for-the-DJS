@@ -5,16 +5,8 @@ import { ParallaxButton } from '../components';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
-type RootStackParamList = {
-  Menu: undefined;
-  Guide: undefined;
-  SongSelect: undefined;
-};
-
-type MenuScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'Menu'>;
-
 export default function MenuScreen() {
-  const navigation = useNavigation<MenuScreenNavigationProp>();
+  const navigation = useNavigation<any>();
 
   return (
     <View style={styles.container}>
@@ -23,7 +15,7 @@ export default function MenuScreen() {
         <View style={styles.button}>
           <ParallaxButton 
             label="START GAME" 
-            onPress={() => navigation.navigate('SongSelect')}
+            onPress={() => navigation.navigate('Mode')}
           />
         </View>
         <View style={styles.button}>
