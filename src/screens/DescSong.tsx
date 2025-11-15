@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, Image, StyleSheet, ImageBackground, TouchableOpacity } from 'react-native';
 import BackButton from '../components/BackButton';
 import { SCREEN_WIDTH } from '../screenWH';
 import { useNavigation } from '@react-navigation/native';
@@ -21,19 +21,11 @@ export default function DescSong({ route }) {
   );
 
   return (
-    <View style={styles.container}>
-      <VideoView
-        style={StyleSheet.absoluteFill}
-        player={player}
-        contentFit="cover"
-        pointerEvents="none"
-        fullscreenOptions={{ enable: false }}
-      />
-      
-      <View 
-        style={[StyleSheet.absoluteFill, styles.blockscreen]} 
-        pointerEvents="auto" 
-      />
+      <ImageBackground
+      source={require('../assets/ui/descBckg.png')}
+      style={styles.container}
+      resizeMode="cover"
+    >
 
       <BackButton />
       <View style={styles.card}>
@@ -49,18 +41,18 @@ export default function DescSong({ route }) {
           <View style={styles.progressFill} />
         </View>
         <View style={styles.scoreSection}>
-          <Text style={styles.topScore}>Top Score: {song.topScore || 0}</Text>
           <TouchableOpacity
             style={styles.playButton}
             onPress={() => {
-              navigation.navigate('Game', { mp3: song.mp3, beatmapL: song.timings.left, beatmapR: song.timings.right });
+              navigation.navigate('Game', { mp3: song.mp3, beatmapL: song.timings.left, beatmapR: song.timings.right});
             }}
           >
             <Text style={styles.playButtonText}>Play ➭</Text>
           </TouchableOpacity>
         </View>
       </View>
-    </View>
+      
+    </ImageBackground>
   );
 }
 
@@ -125,11 +117,6 @@ const styles = StyleSheet.create({
   scoreSection: {
     alignItems: 'center',
     marginTop: 20,
-  },
-  topScore: {
-    fontSize: 16,
-    color: '#fff',
-    marginBottom: 20,
   },
   playButton: {
     backgroundColor: '#ffffffff',
