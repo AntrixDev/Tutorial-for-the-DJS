@@ -1,8 +1,7 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
-import { View, StyleSheet, ImageBackground, Text, TouchableOpacity, Modal, Dimensions, AppState, Animated, Image } from 'react-native';
+import { View, StyleSheet, ImageBackground, Text, TouchableOpacity, Modal, Animated, Image, AppState } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { SCREEN_WIDTH } from '../screenWH';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { useAudioPlayer, useAudioPlayerStatus } from 'expo-audio';
 import Vinyl from '../components/Vinyl';
 
@@ -23,7 +22,8 @@ export default function GameScreen({ route }) {
   const timerRefs = useRef<NodeJS.Timeout[]>([]);
   const lastPauseTime = useRef<number | null>(null);
   const [gameStarted, setGameStarted] = useState(false);
-  
+  const [countdownActive, setCountdownActive] = useState(true);
+
   const [requiredStateLeft, setRequiredStateLeft] = useState<RequiredState | null>(null);
   const [requiredStateRight, setRequiredStateRight] = useState<RequiredState | null>(null);
   const [triggerSliceGroupLeft, setTriggerSliceGroupLeft] = useState<string | null>(null);
@@ -55,6 +55,7 @@ export default function GameScreen({ route }) {
 
   const startCountdown = useCallback(() => {
     clearTimers();
+    setCountdownActive(true);
     setCountdown('3');
     const startTime = Date.now();
     const interval = setInterval(() => {
@@ -68,6 +69,7 @@ export default function GameScreen({ route }) {
         clearInterval(interval);
         timerRefs.current = timerRefs.current.filter(t => t !== interval);
         setCountdown('');
+        setCountdownActive(false);
         player.play();
         setPaused(false);
         setGameStarted(true);
@@ -126,7 +128,7 @@ export default function GameScreen({ route }) {
   };
 
   useEffect(() => {
-    if (gameOver || paused || nextBeatIndexLeft >= beatmapL.length) return;
+    if (gameOver || paused || countdownActive || nextBeatIndexLeft >= beatmapL.length) return;
 
     let newIndex = nextBeatIndexLeft;
     while (newIndex < beatmapL.length && status.currentTime >= beatmapL[newIndex]) {
@@ -147,10 +149,10 @@ export default function GameScreen({ route }) {
       newIndex++;
     }
     if (newIndex > nextBeatIndexLeft) setNextBeatIndexLeft(newIndex);
-  }, [status.currentTime, nextBeatIndexLeft, gameOver, paused, requiredStateLeft, beatmapL]);
+  }, [status.currentTime, nextBeatIndexLeft, gameOver, paused, countdownActive, requiredStateLeft, beatmapL]);
 
   useEffect(() => {
-    if (gameOver || paused || nextBeatIndexRight >= beatmapR.length) return;
+    if (gameOver || paused || countdownActive || nextBeatIndexRight >= beatmapR.length) return;
 
     let newIndex = nextBeatIndexRight;
     while (newIndex < beatmapR.length && status.currentTime >= beatmapR[newIndex]) {
@@ -171,7 +173,7 @@ export default function GameScreen({ route }) {
       newIndex++;
     }
     if (newIndex > nextBeatIndexRight) setNextBeatIndexRight(newIndex);
-  }, [status.currentTime, nextBeatIndexRight, gameOver, paused, requiredStateRight, beatmapR]);
+  }, [status.currentTime, nextBeatIndexRight, gameOver, paused, countdownActive, requiredStateRight, beatmapR]);
 
   useEffect(() => {
     if (status.isLoaded && status.duration && !gameOver && gameStarted && status.currentTime >= status.duration - 40) {
@@ -226,7 +228,11 @@ export default function GameScreen({ route }) {
   return (
       <ImageBackground source={require('../assets/gameplay/gameBckg.png')} style={styles.container}>
 
-        <TouchableOpacity style={styles.menuButton} onPress={() => { setModalVisible(true); player.pause(); setPaused(true); }}>
+        <TouchableOpacity
+          style={styles.menuButton}
+          onPress={() => { setModalVisible(true); player.pause(); setPaused(true); }}
+          disabled={countdownActive}
+        >
           <Text style={styles.arrow}>☰</Text>
         </TouchableOpacity>
 
@@ -241,7 +247,7 @@ export default function GameScreen({ route }) {
           </View>
         ) : null}
 
-        <View style={styles.vinylContainer}>
+        <View style={styles.vinylContainer} pointerEvents={countdownActive ? 'none' : 'auto'}>
           {showCentralError && (
             <Animated.View style={[styles.centralError, { opacity: fadeAnim }]}>
               <Image source={require('../assets/gameplay/error.png')} style={styles.centralX} />
@@ -283,7 +289,6 @@ export default function GameScreen({ route }) {
               <Text style={styles.modalTitle}>Game Over</Text>
               <Text style={styles.scoreText}>Final Score: {score}</Text>
               <View style={styles.buttonRow}>
-                <TouchableOpacity style={styles.menuItemButton} onPress={handleGameOverRestart}><Text style={styles.buttonText}>Restart</Text></TouchableOpacity>
                 <TouchableOpacity style={styles.menuItemButton} onPress={handleGameOverGoMenu}><Text style={styles.buttonText}>Menu</Text></TouchableOpacity>
               </View>
             </View>
@@ -358,7 +363,10 @@ const styles = StyleSheet.create({
     fontSize: 72,
     fontWeight: '900',
     textShadowColor: '#000',
-    textShadowOffset: { width: 3, height: 3 },
+    textShadowOffset: { 
+      width: 3, 
+      height: 3 
+    },
     textShadowRadius: 10,
   },
   vinylContainer: {
@@ -392,18 +400,27 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   modalContent: {
-    backgroundColor: '#fff',
-    borderRadius: 10,
-    paddingVertical: 25,
-    alignItems: 'center',
-    width: SWidth * 0.5,
+  backgroundColor: 'rgba(255, 255, 255, 0.96)',
+  borderRadius: 15,
+  paddingVertical: 25,
+  paddingHorizontal: 20,
+  alignItems: 'center',
+  width: SWidth * 0.6,
+  shadowColor: '#000',
+  shadowOffset: { 
+    width: 0, 
+    height: 4 
   },
+  shadowOpacity: 0.3,
+  shadowRadius: 8,
+},
   modalTitle: {
-    fontSize: 30,
-    fontWeight: '900',
-    marginBottom: 10,
-    color: '#000',
-  },
+  fontSize: 28,
+  fontWeight: '900',
+  marginBottom: 15,
+  color: '#000',
+  textAlign: 'center',
+},
   scoreText: {
     fontSize: 18,
     color: '#000',
@@ -415,17 +432,25 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   menuItemButton: {
-    height: 55,
-    width: '40%',
-    backgroundColor: '#000',
-    borderRadius: 10,
-    margin: 5,
-    alignItems: 'center',
-    justifyContent: 'center',
+  height: 55,
+  width: '40%',
+  backgroundColor: 'rgba(0,0,0,0.85)',
+  borderRadius: 12,
+  margin: 5,
+  alignItems: 'center',
+  justifyContent: 'center',
+  shadowColor: '#000',
+  shadowOffset: { 
+    width: 0, 
+    height: 2 
   },
-  buttonText: {
-    fontSize: 18,
-    color: '#fff',
-    fontWeight: 'bold',
-  },
+  shadowOpacity: 0.3,
+  shadowRadius: 4,
+  elevation: 6,
+},
+buttonText: {
+  fontSize: 18,
+  color: '#fff',
+  fontWeight: 'bold',
+},
 });
