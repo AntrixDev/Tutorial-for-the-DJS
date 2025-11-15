@@ -170,7 +170,7 @@ export default function TrainingScreen() {
       </TouchableOpacity>
 
       <View style={styles.topBar}>
-        <Text style={styles.scoreCenter}>{score}</Text>
+        <Text style={styles.scoreCenter}>{score} ☆</Text>
       </View>
 
       <View style={styles.vinylContainer}>
@@ -278,17 +278,26 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   modalContent: {
-    backgroundColor: '#fff',
-    borderRadius: 10,
+    backgroundColor: 'rgba(255, 255, 255, 0.96)',
+    borderRadius: 15,
     paddingVertical: 25,
+    paddingHorizontal: 20,
     alignItems: 'center',
-    width: SWidth * 0.5,
+    width: SWidth * 0.6,
+    shadowColor: '#000',
+    shadowOffset: { 
+      width: 0, 
+      height: 4 
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
   },
-  modalTitle: {
-    fontSize: 30,
+    modalTitle: {
+    fontSize: 28,
     fontWeight: '900',
-    marginBottom: 10,
+    marginBottom: 15,
     color: '#000',
+    textAlign: 'center',
   },
   scoreText: {
     fontSize: 18,
@@ -303,11 +312,19 @@ const styles = StyleSheet.create({
   menuItemButton: {
     height: 55,
     width: '40%',
-    backgroundColor: '#000',
-    borderRadius: 10,
+    backgroundColor: 'rgba(0,0,0,0.85)',
+    borderRadius: 12,
     margin: 5,
     alignItems: 'center',
     justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOffset: { 
+      width: 0, 
+      height: 2 
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 6,
   },
   buttonText: {
     fontSize: 18,
