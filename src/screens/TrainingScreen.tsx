@@ -148,7 +148,6 @@ export default function TrainingScreen() {
     setLoopCount(0);
     prevTimeRef.current = 0;
 
-    // Start game immediately
     if (status.isLoaded) {
       player.play();
       setPaused(false);

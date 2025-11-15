@@ -21,8 +21,7 @@ export default function SongSelectScreen() {
   const containerWidth = 0.7 * SWidth;
   const containerPadding = 10;
   const containerBorder = 2;
-  const availableWidth =
-    containerWidth - 2 * containerPadding - 2 * containerBorder;
+  const availableWidth = containerWidth - 2 * containerPadding - 2 * containerBorder;
 
   const itemMargin = 10;
   const itemPadding = 10;
@@ -31,7 +30,7 @@ export default function SongSelectScreen() {
   const itemWidth = itemOccupied - 2 * itemMargin;
   const imageSize = itemWidth - 2 * itemPadding;
 
-  const availableSongs = 1;
+  const availableSongs = 2;
 
   return (
     <View style={styles.container}>
