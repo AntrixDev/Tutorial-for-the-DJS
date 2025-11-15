@@ -9,7 +9,7 @@ export default function ModeScreen() {
 
   return (
     <ImageBackground
-      //source={require('../assets/ui/modeBackground.png')}
+      //source={require('../assets/ui/modeBckg.png')}
       style={styles.bg}
       resizeMode="cover"
     >
@@ -17,7 +17,7 @@ export default function ModeScreen() {
       <View style={styles.cardRow}>
         <TouchableOpacity
           style={styles.cardWrapper}
-          onPress={() => {}}
+          onPress={() => navigation.navigate('Train')}
           activeOpacity={0.9}
         >
           <Image

@@ -15,6 +15,7 @@ interface RequiredState {
 
 export default function GameScreen({ route }) {
   const { mp3, beatmapL, beatmapR } = route.params;
+
   const [countdown, setCountdown] = useState<string>('');
   const [isModalVisible, setModalVisible] = useState(false);
   const [isGameOverModalVisible, setGameOverModalVisible] = useState(false);
@@ -223,15 +224,12 @@ export default function GameScreen({ route }) {
   const hearts = '❤︎'.repeat(lives);
 
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
       <ImageBackground source={require('../assets/gameplay/gameBckg.png')} style={styles.container}>
 
-        {/* Menu Button (left corner) */}
         <TouchableOpacity style={styles.menuButton} onPress={() => { setModalVisible(true); player.pause(); setPaused(true); }}>
           <Text style={styles.arrow}>☰</Text>
         </TouchableOpacity>
 
-        {/* ⭐ NEW TOP BAR ⭐ */}
         <View style={styles.topBar}>
           <Text style={styles.scoreCenter}>{score}</Text>
           <Text style={styles.heartsRight}>{hearts}</Text>
@@ -293,7 +291,6 @@ export default function GameScreen({ route }) {
         </Modal>
 
       </ImageBackground>
-    </GestureHandlerRootView>
   );
 }
 
@@ -329,10 +326,10 @@ const styles = StyleSheet.create({
   },
   menuButton: {
     position: 'absolute',
-    top: '4%',
-    left: '2%',
-    width: 45,
-    height: 35,
+    top: 25,
+    left: 25,
+    width: 50,
+    height: 50,
     backgroundColor: '#fff',
     borderRadius: 8,
     alignItems: 'center',
