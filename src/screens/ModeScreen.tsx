@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, ImageBackground, TouchableOpacity, Image, StyleSheet } from 'react-native';
+import { View, ImageBackground, TouchableOpacity, Image, StyleSheet, Text } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import BackButton from '../components/BackButton';
 import { SCREEN_WIDTH, SCREEN_HEIGHT } from '../screenWH';
@@ -20,30 +20,24 @@ export default function ModeScreen() {
           onPress={() => navigation.navigate('Train')}
           activeOpacity={0.9}
         >
-          <Image
-            style={styles.cardImage}
-            source={require('../assets/ui/TrainingModeCard.png')}
-          />
+          <Image style={styles.cardImage} source={require('../assets/ui/TrainingModeCard.png')} />
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.cardWrapper}
           onPress={() => navigation.navigate('SongSelect')}
           activeOpacity={0.9}
         >
-          <Image
-            style={styles.cardImage}
-            source={require('../assets/ui/NormalModeCard.png')}
-          />
+          <Image style={styles.cardImage} source={require('../assets/ui/NormalModeCard.png')} />
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.cardWrapper}
-          onPress={() => navigation.navigate('SongSelect')}
+          onPress={() => {}}
           activeOpacity={0.9}
         >
-          <Image
-            style={styles.cardImage}
-            source={require('../assets/ui/LoopModeCard.png')}
-          />
+          <Image style={styles.cardImage} source={require('../assets/ui/LoopModeCard.png')} />
+          <View style={styles.overlay}>
+            <Text style={styles.overlayText}>WORKING ON IT ✌︎㋡ </Text>
+          </View>
         </TouchableOpacity>
       </View>
     </ImageBackground>
@@ -83,5 +77,19 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
     position: 'absolute',
+  },
+
+  overlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  overlayText: {
+    color: 'white',
+    fontSize: 18,
+    fontWeight: 'bold',
+    textAlign: 'center',
   },
 });
