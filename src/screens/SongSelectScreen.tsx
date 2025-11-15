@@ -1,16 +1,15 @@
 import React from 'react';
 import {
-  TouchableOpacity,
   View,
   StyleSheet,
-  Text,
   Image,
   FlatList,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import songs, { Song } from '../songs/songs';
+import songs from '../songs/songs';
 import { SCREEN_WIDTH, SCREEN_HEIGHT } from '../screenWH';
 import BackButton from '../components/BackButton';
+import SongCard from '../components/SongCard';
 
 const SWidth = SCREEN_WIDTH;
 const SHeight = SCREEN_HEIGHT;
@@ -22,56 +21,57 @@ export default function SongSelectScreen() {
   const containerWidth = 0.7 * SWidth;
   const containerPadding = 10;
   const containerBorder = 2;
-  const availableWidth = containerWidth - 2 * containerPadding - 2 * containerBorder;
+  const availableWidth =
+    containerWidth - 2 * containerPadding - 2 * containerBorder;
+
   const itemMargin = 10;
   const itemPadding = 10;
+
   const itemOccupied = availableWidth / numColumns;
   const itemWidth = itemOccupied - 2 * itemMargin;
   const imageSize = itemWidth - 2 * itemPadding;
-  const avalibleSongs = 1; //last index
 
-  const renderItem = ({ item, index }: { item: Song; index: number }) => (
-    <TouchableOpacity
-      style={[
-        styles.songItem,
-        {
-          width: itemWidth,
-          backgroundColor: index > avalibleSongs ? '#ffffff97' : '#ffffffff',
-          opacity: index > avalibleSongs ? 0.25 : 1,
-        },
-      ]}
-      onPress={() => {
-        if (index <= avalibleSongs) {
-          //nav
-          navigation.navigate('DescSong', { song: item});
-      }
-      }}
-    >
-      <Image style={[styles.songImage, { width: imageSize, height: imageSize }]} source={item.image} />
-      <Text style={styles.songDifficulty}>{item.difficulty}</Text>
-      <View style={styles.songInfo}>
-        <Text style={styles.songTitle}>{item.title}</Text>
-        <Text style={styles.songSinger}>by {item.singer}</Text>
-      </View>
-    </TouchableOpacity>
-  );
+  const availableSongs = 1;
 
   return (
     <View style={styles.container}>
       <BackButton />
-      <View style={[styles.songListContainer, { width: containerWidth, height: SHeight }]}>
+
+      <View
+        style={[
+          styles.songListContainer,
+          { width: containerWidth, height: SHeight },
+        ]}
+      >
         <FlatList
           data={songs}
-          renderItem={renderItem}
           keyExtractor={(item) => item.id.toString()}
           numColumns={numColumns}
-          key={numColumns.toString()}
+          renderItem={({ item, index }) => (
+            <SongCard
+              item={item}
+              index={index}
+              availableSongs={availableSongs}
+              width={itemWidth}
+              imageSize={imageSize}
+              onPress={() => navigation.navigate('DescSong', { song: item })}
+            />
+          )}
           showsVerticalScrollIndicator={false}
         />
       </View>
 
-      <Image source={require('../assets/ui/SSCorner.png')} style={[styles.pinkBorder, { left: 0 }]} />
-      <Image source={require('../assets/ui/SSCorner.png')} style={[styles.pinkBorder, { right: 0, transform: [{ scaleX: -1 }] }]} />
+      <Image
+        source={require('../assets/ui/SSCorner.png')}
+        style={[styles.pinkBorder, { left: 0 }]}
+      />
+      <Image
+        source={require('../assets/ui/SSCorner.png')}
+        style={[
+          styles.pinkBorder,
+          { right: 0, transform: [{ scaleX: -1 }] },
+        ]}
+      />
     </View>
   );
 }
@@ -89,56 +89,10 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
     overflow: 'hidden',
   },
-  songItem: {
-    flexDirection: 'column',
-    borderRadius: 8,
-    marginVertical: 8,
-    marginHorizontal: 8,
-    alignItems: 'center',
-    padding: 10,
-    borderWidth: 2,
-    borderColor: 'black',
-    position: 'relative',
-  },
-  songImage: {
-    borderRadius: 8,
-    borderWidth: 2,
-    borderColor: 'black',
-  },
-  songInfo: {
-    marginTop: 5,
-    alignItems: 'center',
-  },
-  songTitle: {
-    fontSize: 14,
-    fontWeight: 'bold',
-    color: '#000',
-    textAlign: 'center',
-  },
-  songSinger: {
-    fontSize: 13,
-    color: '#333',
-    marginTop: 2,
-    textAlign: 'center',
-  },
-  songDifficulty: { 
-  fontSize: 12,
-  color: 'white',
-  marginTop: 3,
-  textAlign: 'center',
-  fontWeight: '800',
-  backgroundColor: '#f393cbff',
-  borderColor: 'black',
-  paddingHorizontal: 6,
-  paddingVertical: 2,
-  borderRadius: 10,
-  position: 'absolute',
-},
-
   pinkBorder: {
-  position: 'absolute',
-  bottom: 0,
-  width: SCREEN_WIDTH * 0.20,
-  height: SCREEN_WIDTH *0.23,
+    position: 'absolute',
+    bottom: 0,
+    width: SCREEN_WIDTH * 0.2,
+    height: SCREEN_WIDTH * 0.23,
   },
 });
